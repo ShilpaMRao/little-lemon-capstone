@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { validateEmail } from "../utils";
+import { validateEmail, validateName } from "../utils";
+import Button from "../components/Button";
 import {
   Alert,
   Image,
@@ -12,12 +13,23 @@ import {
 } from "react-native";
 
 const Onboarding = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
+  const isEmailValid = validateEmail(email);
+  const isFirstNameValid = validateName(firstName);
+  const isLastNameValid = validateName(lastName);
+  const isFormValid = () => isEmailValid && isFirstNameValid && isLastNameValid;
+
+  if (!isFormValid) {
+    Alert.alert("Please enter valid values!");
+  }
   const handleNext = () => {
-    if (!validateEmail(email)) {
-      Alert.alert("Invalid Email", "Please enter a valid email address.");
-    }
+    Alert.alert("Thank you", "Done!");
+    setFirstName("");
+    setLastName("");
+    setEmail("");
   };
   return (
     <ScrollView style={styles.container}>
@@ -30,26 +42,27 @@ const Onboarding = () => {
       />
       <Text style={styles.introText}>Let us get to know you</Text>
       <Text style={styles.text}>First Name</Text>
-      <TextInput style={styles.textInput} />
+      <TextInput
+        style={styles.textInput}
+        value={firstName}
+        onChangeText={setFirstName}
+      />
       <Text style={styles.text}>Last Name</Text>
-      <TextInput style={styles.textInput} />
-      <Text
-        style={styles.text}
-        value={email}
-        keyboardType="email-address"
-        onChangeText={setEmail}
-      >
-        Email
-      </Text>
+      <TextInput
+        style={styles.textInput}
+        value={lastName}
+        onChangeText={setLastName}
+      />
+      <Text style={styles.text}>Email</Text>
       <TextInput
         style={styles.textInput}
         value={email}
         keyboardType="email-address"
         onChangeText={setEmail}
       />
-      <Pressable onPress={handleNext}>
-        <Text style={styles.button}>Next</Text>
-      </Pressable>
+      <Button onPress={handleNext} disabled={!isFormValid()}>
+        Next
+      </Button>
     </ScrollView>
   );
 };
@@ -72,7 +85,7 @@ const styles = StyleSheet.create({
     marginVertical: 40,
   },
   text: {
-    padding: 10,
+    padding: 8,
     // fontFamily: "Markazi",
     fontSize: 20,
     fontWeight: "bold",
@@ -84,9 +97,10 @@ const styles = StyleSheet.create({
     width: 350,
     borderRadius: 8,
     // fontFamily: "MarkaziText-Regular",
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: "#495E57",
     fontSize: 20,
+    color: "#495e57",
   },
   button: {
     height: 50,
