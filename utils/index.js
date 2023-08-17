@@ -6,3 +6,7 @@ export const validateEmail = (email) => {
 export const validateName = (name) => {
   return name.match(/^[A-Za-z]+$/);
 };
+
+export const phoneNumberRegex = (phone) => {
+  return phone.match(/^[0-9]{10}$/);
+};

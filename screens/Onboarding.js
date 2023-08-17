@@ -11,8 +11,14 @@ import {
   TextInput,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Profile from "./Profile";
 
-const Onboarding = () => {
+const Onboarding = ({
+  navigation,
+  isOnboardingComplete,
+  setIsOnboardingComplete,
+}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,16 +26,32 @@ const Onboarding = () => {
   const isEmailValid = validateEmail(email);
   const isFirstNameValid = validateName(firstName);
   const isLastNameValid = validateName(lastName);
+  // const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
   const isFormValid = () => isEmailValid && isFirstNameValid && isLastNameValid;
 
-  if (!isFormValid) {
-    Alert.alert("Please enter valid values!");
-  }
-  const handleNext = () => {
-    Alert.alert("Thank you", "Done!");
-    setFirstName("");
-    setLastName("");
-    setEmail("");
+  const handleNext = async () => {
+    // When onboarding is completed
+    console.log("In Handle Next");
+    try {
+      await AsyncStorage.setItem("isOnboardingComplete", "true");
+      setIsOnboardingComplete(true);
+      // Navigate to the Profile screen
+      console.log(
+        "If isOnboardingComplete, navigate to profile screen:",
+        isOnboardingComplete
+      );
+      const profileData = {};
+      if (firstName) profileData.firstName = firstName;
+      if (lastName) profileData.lastName = lastName;
+      if (email) profileData.email = email;
+
+      navigation.navigate("Profile", profileData);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+    } catch (error) {
+      console.error("Error setting onboarding status in Onboarding.js:", error);
+    }
   };
   return (
     <ScrollView style={styles.container}>
@@ -47,6 +69,7 @@ const Onboarding = () => {
         value={firstName}
         onChangeText={setFirstName}
       />
+
       <Text style={styles.text}>Last Name</Text>
       <TextInput
         style={styles.textInput}
@@ -60,6 +83,7 @@ const Onboarding = () => {
         keyboardType="email-address"
         onChangeText={setEmail}
       />
+
       <Button onPress={handleNext} disabled={!isFormValid()}>
         Next
       </Button>
@@ -70,6 +94,7 @@ const Onboarding = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    margin: 24,
   },
   img: {
     height: 150,
@@ -101,6 +126,9 @@ const styles = StyleSheet.create({
     borderColor: "#495E57",
     fontSize: 20,
     color: "#495e57",
+  },
+  warning: {
+    color: "red",
   },
   button: {
     height: 50,
