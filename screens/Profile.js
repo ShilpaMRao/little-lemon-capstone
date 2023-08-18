@@ -7,10 +7,11 @@ import {
   TextInput,
   StyleSheet,
   View,
-  Button,
 } from "react-native";
+import Button from "../components/Button";
 // import { CheckBoxComponent } from "@react-native-community/checkbox";
 import * as ImagePicker from "expo-image-picker";
+const defaultAvatar = require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Profile.png");
 
 const Profile = ({ route }) => {
   console.log("In Profile", route);
@@ -40,18 +41,23 @@ const Profile = ({ route }) => {
   // };
   return (
     <ScrollView style={styles.container}>
-      <Image
-        style={styles.img}
-        source={require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Logo.png")}
-        resizeMode="contain"
-        accessible={true}
-        accessibilityLabel="Little Lemon Logo"
-      />
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Button title="Pick an image from camera roll" onPress={pickImage} />
-        {image && (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+      <Text style={styles.text}>Personal Information</Text>
+      <View style={styles.imgcontainer}>
+        {image ? (
+          <Image source={{ uri: image }} style={styles.img} />
+        ) : (
+          <Image source={defaultAvatar} style={styles.img} />
         )}
+        <Button style={styles.changeButton} onPress={pickImage}>
+          Change
+        </Button>
+        <Button
+          style={styles.removeButton}
+          onPress={pickImage}
+          textColor="#495E57"
+        >
+          Remove
+        </Button>
       </View>
       <Text style={styles.text}>First Name</Text>
       <Text style={styles.textInput}>{firstName}</Text>
@@ -93,9 +99,15 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 24,
   },
+  imgcontainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   img: {
-    height: 150,
-    width: 350,
+    height: 100,
+    width: 100,
+    marginTop: 10,
+    marginLeft: 20,
   },
   introText: {
     padding: 10,
@@ -127,16 +139,30 @@ const styles = StyleSheet.create({
   warning: {
     color: "red",
   },
-  button: {
+  changeButton: {
     height: 50,
-    width: 200,
+    width: 100,
     borderRadius: 8,
     padding: 10,
     backgroundColor: "#495E57",
     color: "#EEFEEF",
     fontSize: 25,
     textAlign: "center",
-    marginLeft: 150,
+    marginLeft: 20,
+    marginVertical: 40,
+  },
+  removeButton: {
+    height: 50,
+    width: 100,
+    borderRadius: 8,
+    padding: 10,
+    backgroundColor: "white",
+    borderColor: "#495e57",
+    borderWidth: 2,
+    color: "#495E57",
+    fontSize: 25,
+    textAlign: "center",
+    marginLeft: 20,
     marginVertical: 40,
   },
 });

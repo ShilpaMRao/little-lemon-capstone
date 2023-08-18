@@ -14,11 +14,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Profile from "./Profile";
 
-const Onboarding = ({
-  navigation,
-  isOnboardingComplete,
-  setIsOnboardingComplete,
-}) => {
+const Onboarding = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,13 +29,13 @@ const Onboarding = ({
     // When onboarding is completed
     console.log("In Handle Next");
     try {
-      await AsyncStorage.setItem("isOnboardingComplete", "true");
-      setIsOnboardingComplete(true);
-      // Navigate to the Profile screen
-      console.log(
-        "If isOnboardingComplete, navigate to profile screen:",
-        isOnboardingComplete
-      );
+      //   await AsyncStorage.setItem("isOnboardingComplete", "true");
+      //   setIsOnboardingComplete(true);
+      //   // Navigate to the Profile screen
+      //   console.log(
+      //     "If isOnboardingComplete, navigate to profile screen:",
+      //     isOnboardingComplete
+      //   );
       const profileData = {};
       if (firstName) profileData.firstName = firstName;
       if (lastName) profileData.lastName = lastName;
@@ -84,7 +80,11 @@ const Onboarding = ({
         onChangeText={setEmail}
       />
 
-      <Button onPress={handleNext} disabled={!isFormValid()}>
+      <Button
+        style={styles.button}
+        onPress={handleNext}
+        disabled={!isFormValid()}
+      >
         Next
       </Button>
     </ScrollView>
