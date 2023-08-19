@@ -15,7 +15,7 @@ import * as ImagePicker from "expo-image-picker";
 const defaultAvatar = require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Profile.png");
 import { validatePhone } from "../utils";
 
-const Profile = ({ route }) => {
+const Profile = ({ navigation, route }) => {
   console.log("In Profile", route);
   const { firstName, lastName, email } = route.params;
   const [fName, setFName] = useState(firstName);
@@ -97,6 +97,7 @@ const Profile = ({ route }) => {
     setLName("");
     setEml("");
     setImage(null);
+    navigation.navigate("Onboarding");
   };
   const handleDiscardChanges = () => {
     Alert.alert("Changes Discarded");

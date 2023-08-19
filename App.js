@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { Image, StyleSheet, Text, View } from "react-native";
 import Onboarding from "./screens/Onboarding";
 import Profile from "./screens/Profile";
+import Home from "./screens/Home";
 import SplashScreen from "./screens/Splash";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -48,7 +49,15 @@ export default function App() {
   return (
     <NavigationContainer style={styles.container}>
       <Stack.Navigator>
-        <Stack.Screen name="Onboarding" component={Onboarding} />
+        {/* <Stack.Screen name="Onboarding" component={Onboarding} /> */}
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{
+            title: "Home",
+            headerTitle: (props) => <LogoTitle {...props} />,
+          }}
+        />
         <Stack.Screen
           name="Profile"
           component={Profile}
