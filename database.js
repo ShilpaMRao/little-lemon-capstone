@@ -8,7 +8,7 @@ export async function createTable() {
     db.transaction(
       (tx) => {
         tx.executeSql(
-          "create table if not exists menuitems (id integer primary key not null, uuid text, title text, price text, category text);"
+          "create table if not exists menuitems (id integer primary key not null, uuid text, title text, description text ,price text, category text);"
         );
       },
       reject,
@@ -29,11 +29,11 @@ export async function getMenuItems() {
 
 export function saveMenuItems(menuItems) {
   db.transaction((tx) => {
-    tx.executeSql(`INSERT INTO menuitems (uuid, title, price, category) VALUES 
+    tx.executeSql(`INSERT INTO menuitems (uuid, title, description, price, category) VALUES 
       ${menuItems
         .map(
           (item) =>
-            `('${item.id}','${item.title}','${item.price}','${item.category}')`
+            `('${item.id}','${item.title}','${item.description}','${item.price}','${item.category}')`
         )
         .join(", ")}
     `);
@@ -74,7 +74,7 @@ export async function filterByQueryAndCategories(query, activeCategories) {
           resolve(rows._array);
         }
       );
-    });
+    }, reject);
   });
 }
 

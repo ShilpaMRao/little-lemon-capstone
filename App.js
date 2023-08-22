@@ -56,14 +56,14 @@ export default function App() {
             headerTitle: (props) => <LogoTitle {...props} />,
           }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Profile"
           component={Profile}
           options={{
             title: "Profile",
             headerTitle: (props) => <LogoTitle {...props} />,
           }}
-        />
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
