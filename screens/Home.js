@@ -7,6 +7,8 @@ import {
   View,
   FlatList,
   Alert,
+  ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
 import debounce from "lodash.debounce";
@@ -100,6 +102,19 @@ const Home = () => {
   const [data, setData] = useState([]);
   const [searchBarText, setSearchBarText] = useState("");
   const [query, setQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const handleCategorySelect = (category) => {
+    if (selectedCategories.includes(category)) {
+      // If category is already selected, remove it
+      setSelectedCategories((prevCategories) =>
+        prevCategories.filter((cat) => cat !== category)
+      );
+    } else {
+      // If category is not selected, add it
+      setSelectedCategories((prevCategories) => [...prevCategories, category]);
+    }
+  };
+
   //   const [filterSelections, setFilterSelections] = useState(
   //     sections.map(() => false)
   //   );
@@ -130,6 +145,63 @@ const Home = () => {
   const uniqueCategories = Array.from(
     new Set(data.map((item) => capitalizeFirstLetter(item.category)))
   );
+  const [selectedCategory, setSelectedCategory] = useState(null); // State to track the selected category
+
+  // Function to filter items based on the selected category
+  // const filterItemsByCategory = () => {
+  //   console.log("Selected Category:", selectedCategory);
+
+  //   if (!selectedCategory) {
+  //     return data; // If no category is selected, return all data
+  //   }
+  //   const lowercaseCategory =
+  //     selectedCategory.charAt(0).toLowerCase() + selectedCategory.slice(1); // Convert first letter to lowercase
+  //   if (!lowercaseCategory) {
+  //     return data; // If no category is selected, return all data
+  //   }
+  //   console.log(lowercaseCategory);
+  //   return data.filter((item) => item.category === lowercaseCategory);
+  // };
+  // const filterItemsByCategory = () => {
+  //   const lowercaseSelectedCategories = selectedCategories.map((category) =>
+  //     category.toLowerCase()
+  //   );
+
+  //   if (lowercaseSelectedCategories.length === 0) {
+  //     return data; // If no category is selected, return all data
+  //   }
+
+  //   return data.filter((item) =>
+  //     lowercaseSelectedCategories.includes(item.category.toLowerCase())
+  //   );
+  // };
+
+  const filterItemsByCategory = () => {
+    const lowercaseSelectedCategories = selectedCategories.map((category) =>
+      category.toLowerCase()
+    );
+
+    if (lowercaseSelectedCategories.length === 0 && !searchBarText) {
+      return data; // If no category is selected and no search query, return all data
+    }
+
+    return data.filter((item) => {
+      const lowercaseCategory = (item.category || "").toLowerCase();
+      const lowercaseTitle = (item.name || "").toLowerCase(); // Use 'name' instead of 'title'
+
+      const includesCategory =
+        lowercaseSelectedCategories.includes(lowercaseCategory);
+
+      const includesSearchQuery = lowercaseTitle.includes(
+        searchBarText.toLowerCase()
+      );
+
+      return (
+        (lowercaseSelectedCategories.length === 0 || includesCategory) &&
+        (searchBarText === "" || includesSearchQuery)
+      );
+    });
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.menuItemContainer}>
@@ -149,81 +221,91 @@ const Home = () => {
   );
   return (
     <>
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.header}>Little Lemon</Text>
-          <Text style={styles.subHeader}>Chicago</Text>
-          <Text style={styles.body}>We are a family owned</Text>
-          <Text style={styles.body}>Mediterranean restaurant,</Text>
-          <Text style={styles.body}>focused on traditional</Text>
-          <Text style={styles.body}>receipes served with a </Text>
-          <Text style={styles.body}>modern twist.</Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+      >
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* <View style={styles.container}> */}
+          <View style={styles.textContainer}>
+            <Text style={styles.header}>Little Lemon</Text>
+            <Text style={styles.subHeader}>Chicago</Text>
+            <Text style={styles.body}>We are a family owned</Text>
+            <Text style={styles.body}>Mediterranean restaurant,</Text>
+            <Text style={styles.body}>focused on traditional</Text>
+            <Text style={styles.body}>receipes served with a </Text>
+            <Text style={styles.body}>modern twist.</Text>
+            <Searchbar
+              style={styles.searchBar}
+              placeholder="Search"
+              placeholderTextColor="#495E57"
+              onChangeText={(query) => setSearchBarText(query)}
+              value={searchBarText}
+              iconColor="#495E57"
+              elevation={0}
+            />
+          </View>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/Hero_image.png")}
+              style={styles.heroImage}
+            />
+          </View>
+          {/* </View> */}
+        </ScrollView>
+
+        <Text style={styles.orderTab}>ORDER FOR DELIVERY!</Text>
+        <View style={styles.tab}>
+          {uniqueCategories.map((category) => (
+            <Pressable
+              key={category}
+              onPress={() => handleCategorySelect(category)}
+            >
+              <Text
+                style={[
+                  styles.tabItem,
+                  selectedCategories.includes(category) &&
+                    styles.selectedCategory, // Apply styles for selected categories
+                ]}
+              >
+                {category}
+              </Text>
+            </Pressable>
+          ))}
         </View>
-        <View style={styles.imageContainer}>
-          <Image
-            // source={require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Hero_image.png")}
-            source={require("../assets/Hero_image.png")}
-            style={styles.heroImage}
+
+        <View style={styles.listView}>
+          <FlatList
+            //data={data}
+            data={filterItemsByCategory()} // Pass the filtered items to the FlatList
+            keyExtractor={(item) => item.name} // Assuming 'name' is a unique identifier
+            renderItem={renderItem}
           />
         </View>
-        <View style={styles.searchContainer}>
-          <Searchbar
-            style={styles.searchBar}
-            placeholder="Search"
-            placeholderTextColor="#495E57"
-            //   onChangeText={handleSearchChange}
-            //   value={searchBarText}
-
-            iconColor="#495E57"
-            // inputStyle={{ color: "white" }}
-            // elevation={0}
-          />
-        </View>
-        {/* <Filters
-          selections={filterSelections}
-          onChange={handleFiltersChange}
-          sections={sections}
-        /> */}
-      </View>
-
-      <Text style={styles.orderTab}>ORDER FOR DELIVERY!</Text>
-      {/* <View style={styles.tab}>
-        <Pressable>
-          <Text style={styles.tabItem}>Starters</Text>
-        </Pressable>
-        <Pressable>
-          <Text style={styles.tabItem}>Mains</Text>
-        </Pressable>
-        <Pressable>
-          <Text style={styles.tabItem}>Desserts</Text>
-        </Pressable>
-        <Pressable>
-          <Text style={styles.tabItem}>Drinks</Text>
-        </Pressable>
-      </View> */}
-      <View style={styles.tab}>
-        {uniqueCategories.map((category) => (
-          <Pressable key={category}>
-            <Text style={styles.tabItem}>{category}</Text>
-          </Pressable>
-        ))}
-      </View>
-
-      <View style={styles.listView}>
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.name} // Assuming 'name' is a unique identifier
-          renderItem={renderItem}
-        />
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 0.52,
+    flex: 0.3,
     backgroundColor: "#495E57",
     flexDirection: "row",
+  },
+  // contentContainer: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center", // Vertically align content
+  //   // paddingHorizontal: 15,
+  // },
+  textContainer: {
+    flex: 1,
+    flexDirection: "column",
   },
   header: {
     fontSize: 45,
@@ -242,15 +324,26 @@ const styles = StyleSheet.create({
     color: "#EDEFEE",
     marginLeft: 15,
   },
+  searchBar: {
+    marginTop: 35,
+    marginLeft: 15,
+    borderRadius: 8,
+    height: 50,
+    width: 380,
+    color: "#495E57",
+  },
   imageContainer: {
-    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "flex-end", // Align the content to the right side
+    flex: 1, // Make it flexible to occupy available space
   },
   heroImage: {
-    height: 140,
-    width: 140,
+    height: 190,
+    width: 190,
     resizeMode: "contain",
     borderRadius: 8,
-    marginTop: 100,
+    marginBottom: 85,
+    marginRight: 5, // Adjust the margin to position it to the right
   },
   orderTab: {
     fontSize: 25,
@@ -271,33 +364,30 @@ const styles = StyleSheet.create({
     color: "#495E57",
     fontWeight: "bold",
   },
-  // searchContainer: {
-  //   flex: 1,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  searchBar: {
-    marginTop: 260,
-    marginRight: 200,
+  selectedCategory: {
+    backgroundColor: "#495E57",
+    padding: 15,
+    marginLeft: 10,
+    fontSize: 15,
     borderRadius: 8,
-    height: 50,
-    width: 300,
-    color: "#495E57",
+    color: "#EDEFEE",
+    fontWeight: "bold",
   },
   listView: {
-    flex: 0.5,
+    flex: 0.8,
     backgroundColor: "white",
   },
-  menuItemTextContainer: {
-    flexDirection: "column",
-    flex: 1,
-    marginLeft: 10,
-  },
+
   menuItemContainer: {
     flexDirection: "row",
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#495E57",
+  },
+  menuItemTextContainer: {
+    flexDirection: "column",
+    flex: 1,
+    marginLeft: 10,
   },
   menuItemImage: {
     width: 100,
