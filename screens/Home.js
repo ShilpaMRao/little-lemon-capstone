@@ -9,6 +9,7 @@ import {
   Alert,
   ScrollView,
   KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
 import debounce from "lodash.debounce";
@@ -97,12 +98,45 @@ const BASE_IMAGE_URL =
 //   arrayCopy[index] = !filterSelections[index];
 //   setFilterSelections(arrayCopy);
 // };
-
-const Home = () => {
+function LogoTitle() {
+  return (
+    <Image
+      source={require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Logo.png")}
+      // source={require("../assets/Logo.png")}
+      style={{
+        height: 60,
+        width: 250,
+        resizeMode: "contain",
+        alignSelf: "center",
+      }}
+    />
+  );
+}
+const Home = ({ route, navigation }) => {
+  // const { user } = route.params;
+  const { user } = "XYZ";
   const [data, setData] = useState([]);
   const [searchBarText, setSearchBarText] = useState("");
   const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      //headerTitle: "Home",
+      headerTitle: (props) => <LogoTitle {...props} />,
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Profile", { user })}
+        >
+          <Image
+            // source={{ uri: user.avatar }}
+            source={require("../assets/Profile.png")}
+            style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, user]);
+
   const handleCategorySelect = (category) => {
     if (selectedCategories.includes(category)) {
       // If category is already selected, remove it

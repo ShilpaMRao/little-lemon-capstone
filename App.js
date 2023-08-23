@@ -13,6 +13,7 @@ function LogoTitle() {
   return (
     <Image
       source={require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Logo.png")}
+      // source={require("../assets/Logo.png")}
       style={{
         height: 60,
         width: 250,
@@ -26,44 +27,56 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
 
-  // useEffect(() => {
-  //   // Read the onboarding completion flag from AsyncStorage
-  //   const fetchData = async () => {
-  //     try {
-  //       const value = await AsyncStorage.getItem("isOnboardingComplete");
-  //       if (value === "true") setIsOnboardingComplete(true);
-  //       setIsLoading(false);
-  //     } catch (error) {
-  //       console.error("Error reading onboarding status:", error);
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   fetchData(); // Call the async function
-  // }, []); // Display Splash Screen until AsyncStorage is read
-  // if (isLoading) {
-  //   return <SplashScreen />;
-  // }
-  // console.log("isOnboardingComplete in App.js:", isOnboardingComplete);
+  useEffect(() => {
+    // Read the onboarding completion flag from AsyncStorage
+    const fetchData = async () => {
+      try {
+        const value = await AsyncStorage.getItem("isOnboardingComplete");
+        if (value === "true") setIsOnboardingComplete(true);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error reading onboarding status:", error);
+        setIsLoading(false);
+      }
+    };
+    fetchData(); // Call the async function
+  }, []); // Display Splash Screen until AsyncStorage is read
+  if (isLoading) {
+    return <SplashScreen />;
+  }
+  console.log("isOnboardingComplete in App.js:", isOnboardingComplete);
   return (
     <NavigationContainer style={styles.container}>
       <Stack.Navigator>
-        {/* <Stack.Screen name="Onboarding" component={Onboarding} /> */}
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            title: "Home",
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        {/* <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            title: "Profile",
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        /> */}
+        {isOnboardingComplete ? (
+          // Onboarding completed, user is signed in
+          <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                title: "Home",
+                headerTitle: (props) => <LogoTitle {...props} />,
+              }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={Profile}
+              options={{
+                title: "Profile",
+                headerTitle: (props) => <LogoTitle {...props} />,
+              }}
+            />
+          </>
+        ) : (
+          // User is NOT signed in
+          <Stack.Screen
+            name="Onboarding"
+            component={Onboarding}
+            isOnboardingComplete={isOnboardingComplete}
+            setIsOnboardingComplete={setIsOnboardingComplete}
+          />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

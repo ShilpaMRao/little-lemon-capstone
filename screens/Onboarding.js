@@ -29,13 +29,13 @@ const Onboarding = ({ navigation }) => {
     // When onboarding is completed
     console.log("In Handle Next");
     try {
-      //   await AsyncStorage.setItem("isOnboardingComplete", "true");
-      //   setIsOnboardingComplete(true);
-      //   // Navigate to the Profile screen
-      //   console.log(
-      //     "If isOnboardingComplete, navigate to profile screen:",
-      //     isOnboardingComplete
-      //   );
+      await AsyncStorage.setItem("isOnboardingComplete", "true");
+      setIsOnboardingComplete(true);
+      // Navigate to the Profile screen
+      console.log(
+        "If isOnboardingComplete, navigate to profile screen:",
+        isOnboardingComplete
+      );
       const profileData = {};
       if (firstName) profileData.firstName = firstName;
       if (lastName) profileData.lastName = lastName;
