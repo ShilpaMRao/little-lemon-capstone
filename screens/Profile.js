@@ -13,7 +13,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Button";
 import CheckBox from "expo-checkbox";
 import * as ImagePicker from "expo-image-picker";
-const defaultAvatar = require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Profile.png");
 import { validatePhone } from "../utils";
 
 const Profile = ({ navigation }) => {
@@ -31,7 +30,6 @@ const Profile = ({ navigation }) => {
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState(null);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
-  //const [avatarSource,setAvatarSource] = useState(null);
 
   const isPhonenumberValid = validatePhone(phone);
   // getting the user info from the AsyncStorage
@@ -157,16 +155,9 @@ const Profile = ({ navigation }) => {
       // Retrieve and log the saved userInfo
       const savedUserInfo = await AsyncStorage.getItem("userInfo");
       console.log("Saved UserInfo:", savedUserInfo);
-
-      //Alert.alert("Changes Saved");
-      // setMessage('Information saved successfully.')
     } catch (error) {
       console.error("Error saving user info:", error);
     }
-    // navigation.navigate("Home", {
-    //   firstName: fName, // Pass the first name
-    //   lastName: lName, // Pass the last name
-    // });
     navigation.navigate("Home");
   };
   return (

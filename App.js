@@ -11,8 +11,7 @@ const Stack = createNativeStackNavigator();
 function LogoTitle() {
   return (
     <Image
-      source={require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Logo.png")}
-      // source={require("../assets/Logo.png")}
+      source={require("../assets/Logo.png")}
       style={{
         height: 60,
         width: 250,

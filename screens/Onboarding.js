@@ -2,27 +2,13 @@ import React, { useState } from "react";
 import { validateEmail, validateName } from "../utils";
 import Button from "../components/Button";
 import { useFonts } from "expo-font";
-import {
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-//import Profile from "./Profile";
 
 const Onboarding = ({ navigation }) => {
-  // const { isOnboardingComplete, setIsOnboardingComplete } = route.params;
-  // console.log("In Onboarding : isOnboardingComplete : ", isOnboardingComplete);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  // const [phone, setPhone] = useState("");
-
   const isEmailValid = validateEmail(email);
   const isFirstNameValid = validateName(firstName);
   const isLastNameValid = validateName(lastName);
@@ -50,7 +36,6 @@ const Onboarding = ({ navigation }) => {
       );
 
       navigation.navigate("Profile");
-      // navigation.navigate("App");
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -58,18 +43,18 @@ const Onboarding = ({ navigation }) => {
       console.error("Error setting onboarding status in Onboarding.js:", error);
     }
   };
-  const [loaded] = useFonts({
-    Markazi: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/fonts/MarkaziText-Regular.ttf"),
-  });
+  // const [loaded] = useFonts({
+  //   Markazi: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/fonts/MarkaziText-Regular.ttf"),
+  // });
 
-  if (!loaded) {
-    return null;
-  }
+  // if (!loaded) {
+  //   return null;
+  // }
   return (
     <ScrollView style={styles.container}>
       <Image
         style={styles.img}
-        source={require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Logo.png")}
+        source={require("../assets/Logo.png")}
         resizeMode="contain"
         accessible={true}
         accessibilityLabel="Little Lemon Logo"
