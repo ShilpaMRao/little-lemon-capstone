@@ -12,36 +12,44 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Profile from "./Profile";
+//import Profile from "./Profile";
 
 const Onboarding = ({ navigation }) => {
+  // const { isOnboardingComplete, setIsOnboardingComplete } = route.params;
+  // console.log("In Onboarding : isOnboardingComplete : ", isOnboardingComplete);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  // const [phone, setPhone] = useState("");
 
   const isEmailValid = validateEmail(email);
   const isFirstNameValid = validateName(firstName);
   const isLastNameValid = validateName(lastName);
-  // const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
   const isFormValid = () => isEmailValid && isFirstNameValid && isLastNameValid;
 
   const handleNext = async () => {
     // When onboarding is completed
     console.log("In Handle Next");
     try {
-      await AsyncStorage.setItem("isOnboardingComplete", "true");
-      setIsOnboardingComplete(true);
-      // Navigate to the Profile screen
-      console.log(
-        "If isOnboardingComplete, navigate to profile screen:",
-        isOnboardingComplete
+      //setting user details in AsyncStorage
+      await AsyncStorage.setItem(
+        "userInfo",
+        JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone: null,
+          avatarSource: null,
+          orderStatuses: false,
+          passwordChanges: false,
+          specialOffers: false,
+          newsletter: false,
+          isOnboardingComplete: true,
+        })
       );
-      const profileData = {};
-      if (firstName) profileData.firstName = firstName;
-      if (lastName) profileData.lastName = lastName;
-      if (email) profileData.email = email;
 
-      navigation.navigate("Profile", profileData);
+      navigation.navigate("Profile");
+      // navigation.navigate("App");
       setFirstName("");
       setLastName("");
       setEmail("");

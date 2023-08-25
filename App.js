@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import Onboarding from "./screens/Onboarding";
 import Profile from "./screens/Profile";
 import Home from "./screens/Home";
@@ -31,9 +30,15 @@ export default function App() {
     // Read the onboarding completion flag from AsyncStorage
     const fetchData = async () => {
       try {
-        const value = await AsyncStorage.getItem("isOnboardingComplete");
-        if (value === "true") setIsOnboardingComplete(true);
-        setIsLoading(false);
+        const userInfo = await AsyncStorage.getItem("userInfo");
+        console.log("UserInfo in App.js: ", userInfo);
+        if (userInfo) {
+          const parsedUserInfo = JSON.parse(userInfo);
+          const onboardingStatus = parsedUserInfo.isOnboardingComplete;
+          console.log("isOnboardingComplete in App.js:", onboardingStatus);
+          setIsOnboardingComplete(onboardingStatus);
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error("Error reading onboarding status:", error);
         setIsLoading(false);
@@ -47,36 +52,31 @@ export default function App() {
   console.log("isOnboardingComplete in App.js:", isOnboardingComplete);
   return (
     <NavigationContainer style={styles.container}>
-      <Stack.Navigator>
-        {isOnboardingComplete ? (
-          // Onboarding completed, user is signed in
-          <>
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{
-                title: "Home",
-                headerTitle: (props) => <LogoTitle {...props} />,
-              }}
-            />
-            <Stack.Screen
-              name="Profile"
-              component={Profile}
-              options={{
-                title: "Profile",
-                headerTitle: (props) => <LogoTitle {...props} />,
-              }}
-            />
-          </>
-        ) : (
-          // User is NOT signed in
-          <Stack.Screen
-            name="Onboarding"
-            component={Onboarding}
-            isOnboardingComplete={isOnboardingComplete}
-            setIsOnboardingComplete={setIsOnboardingComplete}
-          />
-        )}
+      <Stack.Navigator initialRouteName="Onboarding">
+        {/* {isOnboardingComplete ? ( */}
+        {/* // Onboarding completed, user is signed in */}
+        {/* <> */}
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{
+            title: "Home",
+            headerTitle: (props) => <LogoTitle {...props} />,
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            title: "Profile",
+            headerTitle: (props) => <LogoTitle {...props} />,
+          }}
+        />
+        {/* </> */}
+        {/* ) : ( */}
+        {/* // User is NOT signed in */}
+        <Stack.Screen name="Onboarding" component={Onboarding} />
+        {/* )} */}
       </Stack.Navigator>
     </NavigationContainer>
   );

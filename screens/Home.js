@@ -21,6 +21,7 @@ import {
 } from "../database";
 import Filters from "../components/Filters";
 import { getSectionListData, useUpdateEffect } from "../utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const sections = ["Appetizers", "Salads", "Beverages"];
 const API_URL =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -112,30 +113,85 @@ function LogoTitle() {
     />
   );
 }
+const renderInitialsAvatar = (userInitials) => {
+  const initials = `${userInitials}`.toUpperCase();
+
+  return (
+    <View
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "#495E57", // Background color of the avatar
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 10,
+      }}
+    >
+      <Text style={{ fontSize: 18, color: "#FFFFFF" }}>{initials}</Text>
+    </View>
+  );
+};
+
 const Home = ({ route, navigation }) => {
   // const { user } = route.params;
   const { user } = "XYZ";
+  const [fName, setFName] = useState("");
+  const [lName, setLName] = useState("");
+  const [userInitials, setUserInitials] = useState("");
   const [data, setData] = useState([]);
   const [searchBarText, setSearchBarText] = useState("");
   const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
+
+  useEffect(() => {
+    async function fetchUserInfo() {
+      try {
+        // Fetch user info from AsyncStorage
+        const userInfo = await AsyncStorage.getItem("userInfo");
+        console.log("UserInfo in Home.js: ", userInfo);
+        if (userInfo) {
+          const parsedUserInfo = JSON.parse(userInfo);
+          setFName(parsedUserInfo.firstName);
+          setLName(parsedUserInfo.lastName);
+          // Calculate initials
+          const initials = `${fName[0]}${lName[0]}`.toUpperCase();
+          console.log(initials);
+          setUserInitials(initials);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    }
+
+    fetchUserInfo();
+  }, []);
+
   React.useLayoutEffect(() => {
+    // console.log("Name in useLayoutEffect : ", userInitials);
     navigation.setOptions({
       //headerTitle: "Home",
-      headerTitle: (props) => <LogoTitle {...props} />,
+      // headerTitle: (props) => <LogoTitle {...props} />,
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Profile", { user })}
-        >
-          <Image
-            // source={{ uri: user.avatar }}
-            source={require("../assets/Profile.png")}
-            style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
-          />
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          {/* {user.avatar ? (
+            <Image
+              // source={{ uri: user.avatar }}
+              source={require("../assets/Profile.png")}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                marginRight: 10,
+              }}
+            />
+          ) : ( */}
+          {renderInitialsAvatar(userInitials)}
+          {/* )} */}
         </TouchableOpacity>
       ),
     });
-  }, [navigation, user]);
+  }, [navigation, userInitials]);
 
   const handleCategorySelect = (category) => {
     if (selectedCategories.includes(category)) {

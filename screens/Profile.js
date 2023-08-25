@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Image,
   ScrollView,
@@ -9,18 +9,17 @@ import {
   View,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Button";
 import CheckBox from "expo-checkbox";
 import * as ImagePicker from "expo-image-picker";
 const defaultAvatar = require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Profile.png");
 import { validatePhone } from "../utils";
 
-const Profile = ({ navigation, route }) => {
-  console.log("In Profile", route);
-  const { firstName, lastName, email } = route.params;
-  const [fName, setFName] = useState(firstName);
-  const [lName, setLName] = useState(lastName);
-  const [eml, setEml] = useState(email);
+const Profile = ({ navigation }) => {
+  const [fName, setFName] = useState("");
+  const [lName, setLName] = useState("");
+  const [eml, setEml] = useState("");
   const [toggleCheckBoxPasswordChanges, setToggleCheckBoxPasswordChanges] =
     useState(false);
   const [toggleCheckBoxSpecialOffers, setToggleCheckBoxSpecialOffers] =
@@ -32,8 +31,30 @@ const Profile = ({ navigation, route }) => {
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState(null);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
+  //const [avatarSource,setAvatarSource] = useState(null);
 
   const isPhonenumberValid = validatePhone(phone);
+  // getting the user info from the AsyncStorage
+  useEffect(() => {
+    async function fetchUserInfo() {
+      try {
+        // Fetch user info from AsyncStorage
+        const userInfo = await AsyncStorage.getItem("userInfo");
+        console.log("UserInfo in Profile.js: ", userInfo);
+        if (userInfo) {
+          const parsedUserInfo = JSON.parse(userInfo);
+          setFName(parsedUserInfo.firstName);
+          setLName(parsedUserInfo.lastName);
+          setEml(parsedUserInfo.email);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    }
+
+    fetchUserInfo();
+  }, []);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -59,7 +80,7 @@ const Profile = ({ navigation, route }) => {
         />
       );
     } else {
-      const initials = `${firstName} ${lastName}`
+      const initials = `${fName} ${lName}`
         .split(" ")
         .map((namePart) => namePart[0])
         .join("")
@@ -84,26 +105,69 @@ const Profile = ({ navigation, route }) => {
       );
     }
   };
-
-  const handleLogout = () => {
-    setIsLoggedOut(true);
-    setToggleCheckBoxPasswordChanges("");
-    setToggleCheckBoxOrderStatuses("");
-    setToggleCheckBoxNewsletters("");
-    setToggleCheckBoxSpecialOffers("");
-    setPhone("");
-    Alert.alert("Logging out!");
-    setFName("");
-    setLName("");
-    setEml("");
-    setImage(null);
-    navigation.navigate("Onboarding");
+  const handleLogout = async () => {
+    try {
+      // Clear all stored data in AsyncStorage
+      await AsyncStorage.clear();
+      setIsLoggedOut(true);
+      setToggleCheckBoxPasswordChanges(false);
+      setToggleCheckBoxOrderStatuses(false);
+      setToggleCheckBoxNewsletters(false);
+      setToggleCheckBoxSpecialOffers(false);
+      setPhone("");
+      //Alert.alert("Logging out!");
+      setFName("");
+      setLName("");
+      setEml("");
+      setImage(null);
+      // Navigate to OnboardingScreen
+      navigation.navigate("Onboarding");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
   const handleDiscardChanges = () => {
     Alert.alert("Changes Discarded");
   };
-  const handleSaveChanges = () => {
-    Alert.alert("Changes Saved");
+  const handleSaveChanges = async () => {
+    console.log("FirstName : ", fName);
+    console.log("LastName : ", lName);
+    console.log("Email: ", eml);
+    console.log("Phone : ", phone);
+    console.log("PasswordChanges : ", toggleCheckBoxPasswordChanges);
+    console.log("Special offers : ", toggleCheckBoxSpecialOffers);
+    console.log("Order status : ", toggleCheckBoxOrderStatuses);
+    console.log("Newsletters : ", toggleCheckBoxNewsletters);
+
+    try {
+      // Convert boolean to string before saving
+      await AsyncStorage.setItem(
+        "userInfo",
+        JSON.stringify({
+          fName,
+          lName,
+          eml,
+          phone,
+          orderStatuses: toggleCheckBoxOrderStatuses,
+          passwordChanges: toggleCheckBoxPasswordChanges,
+          specialOffers: toggleCheckBoxSpecialOffers,
+          newsletter: toggleCheckBoxNewsletters,
+        })
+      );
+      // Retrieve and log the saved userInfo
+      const savedUserInfo = await AsyncStorage.getItem("userInfo");
+      console.log("Saved UserInfo:", savedUserInfo);
+
+      //Alert.alert("Changes Saved");
+      // setMessage('Information saved successfully.')
+    } catch (error) {
+      console.error("Error saving user info:", error);
+    }
+    // navigation.navigate("Home", {
+    //   firstName: fName, // Pass the first name
+    //   lastName: lName, // Pass the last name
+    // });
+    navigation.navigate("Home");
   };
   return (
     <ScrollView style={styles.container}>
@@ -115,9 +179,11 @@ const Profile = ({ navigation, route }) => {
          ) : (
          <Image source={defaultAvatar} style={styles.img} />
         )
-          
-      
       } */}
+        {/* <Image
+          source={image}
+          // style={{ width: 100, height: 100, borderRadius: 50 }}
+        /> */}
         <Button style={styles.changeButton} onPress={pickImage}>
           Change
         </Button>
