@@ -52,7 +52,9 @@ export default function App() {
   console.log("isOnboardingComplete in App.js:", isOnboardingComplete);
   return (
     <NavigationContainer style={styles.container}>
-      <Stack.Navigator initialRouteName="Onboarding">
+      <Stack.Navigator
+        initialRouteName={isOnboardingComplete ? "Home" : "Onboarding"}
+      >
         {/* {isOnboardingComplete ? ( */}
         {/* // Onboarding completed, user is signed in */}
         {/* <> */}
