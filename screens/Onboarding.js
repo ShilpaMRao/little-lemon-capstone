@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { validateEmail, validateName } from "../utils";
 import Button from "../components/Button";
+import { useFonts } from "expo-font";
 import {
   Alert,
   Image,
@@ -57,6 +58,13 @@ const Onboarding = ({ navigation }) => {
       console.error("Error setting onboarding status in Onboarding.js:", error);
     }
   };
+  const [loaded] = useFonts({
+    Markazi: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/fonts/MarkaziText-Regular.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  }
   return (
     <ScrollView style={styles.container}>
       <Image
@@ -110,7 +118,7 @@ const styles = StyleSheet.create({
   },
   introText: {
     padding: 10,
-    // fontFamily: "Markazi",
+    // fontFamily: "MarkaziText-Regular,Arial,sans-serif",
     fontSize: 30,
     fontWeight: "bold",
     color: "#495E57",
@@ -119,7 +127,7 @@ const styles = StyleSheet.create({
   },
   text: {
     padding: 8,
-    // fontFamily: "Markazi",
+    fontFamily: "Markazi",
     fontSize: 20,
     fontWeight: "bold",
     color: "#495E57",
