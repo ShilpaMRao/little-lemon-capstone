@@ -99,23 +99,10 @@ const BASE_IMAGE_URL =
 //   arrayCopy[index] = !filterSelections[index];
 //   setFilterSelections(arrayCopy);
 // };
-function LogoTitle() {
-  return (
-    <Image
-      source={require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/Logo.png")}
-      // source={require("../assets/Logo.png")}
-      style={{
-        height: 60,
-        width: 250,
-        resizeMode: "contain",
-        alignSelf: "center",
-      }}
-    />
-  );
-}
+
 const renderInitialsAvatar = (userInitials) => {
   const initials = `${userInitials}`.toUpperCase();
-
+  console.log("initials :", initials);
   return (
     <View
       style={{
@@ -133,9 +120,7 @@ const renderInitialsAvatar = (userInitials) => {
   );
 };
 
-const Home = ({ route, navigation }) => {
-  // const { user } = route.params;
-  const { user } = "XYZ";
+const Home = ({ navigation }) => {
   const [fName, setFName] = useState("");
   const [lName, setLName] = useState("");
   const [userInitials, setUserInitials] = useState("");
@@ -145,26 +130,29 @@ const Home = ({ route, navigation }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   useEffect(() => {
-    async function fetchUserInfo() {
+    const fetchData = async () => {
       try {
         // Fetch user info from AsyncStorage
         const userInfo = await AsyncStorage.getItem("userInfo");
-        console.log("UserInfo in Home.js: ", userInfo);
+        console.log("UserInfo in Home.js----> ", userInfo);
         if (userInfo) {
           const parsedUserInfo = JSON.parse(userInfo);
-          setFName(parsedUserInfo.firstName);
-          setLName(parsedUserInfo.lastName);
+          setFName(parsedUserInfo.fName);
+          setLName(parsedUserInfo.lName);
           // Calculate initials
-          const initials = `${fName[0]}${lName[0]}`.toUpperCase();
-          console.log(initials);
+          console.log("----", parsedUserInfo.fName);
+          console.log(parsedUserInfo.lName);
+          const initials =
+            `${parsedUserInfo.fName[0]}${parsedUserInfo.lName[0]}`.toUpperCase();
+          console.log("------>", initials);
           setUserInitials(initials);
         }
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        console.error("Error fetching user info in Home.js:", error);
       }
-    }
+    };
 
-    fetchUserInfo();
+    fetchData();
   }, []);
 
   React.useLayoutEffect(() => {

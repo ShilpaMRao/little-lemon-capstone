@@ -36,7 +36,7 @@ const Profile = ({ navigation }) => {
   const isPhonenumberValid = validatePhone(phone);
   // getting the user info from the AsyncStorage
   useEffect(() => {
-    async function fetchUserInfo() {
+    const fetchData = async () => {
       try {
         // Fetch user info from AsyncStorage
         const userInfo = await AsyncStorage.getItem("userInfo");
@@ -50,9 +50,9 @@ const Profile = ({ navigation }) => {
       } catch (error) {
         console.error("Error fetching user info:", error);
       }
-    }
+    };
 
-    fetchUserInfo();
+    fetchData();
   }, []);
 
   const pickImage = async () => {
