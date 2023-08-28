@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 import debounce from "lodash.debounce";
 import {
   createTable,
@@ -22,6 +23,7 @@ import {
 import Filters from "../components/Filters";
 import { getSectionListData, useUpdateEffect } from "../utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Font from "expo-font";
 const sections = ["Appetizers", "Salads", "Beverages"];
 const API_URL =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -115,7 +117,7 @@ const renderInitialsAvatar = (userInitials) => {
         marginRight: 10,
       }}
     >
-      <Text style={{ fontSize: 18, color: "#FFFFFF" }}>{initials}</Text>
+      <Text style={{ fontSize: 20, color: "#FFFFFF" }}>{initials}</Text>
     </View>
   );
 };
@@ -128,7 +130,14 @@ const Home = ({ navigation }) => {
   const [searchBarText, setSearchBarText] = useState("");
   const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
+  // const navigation = useNavigation();
 
+  // const [fontsLoaded] = Font.useFonts({
+  //   Karla: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/Karla-Regular.ttf"),
+  // });
+  // const [fontsKarla] = Font.useFonts({
+  //   MarkaziText: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/MarkaziText-Regular.ttf"),
+  // });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -146,6 +155,12 @@ const Home = ({ navigation }) => {
             `${parsedUserInfo.fName[0]}${parsedUserInfo.lName[0]}`.toUpperCase();
           console.log("------>", initials);
           setUserInitials(initials);
+          // await Font.loadAsync({
+          //   Karla:require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/Karla-Regular.ttf"),
+          // });
+          // await Font.loadAsync({
+          //   MarkaziText: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/MarkaziText-Regular.ttf"),
+          // });
         }
       } catch (error) {
         console.error("Error fetching user info in Home.js:", error);
@@ -193,11 +208,6 @@ const Home = ({ navigation }) => {
     }
   };
 
-  //   const [filterSelections, setFilterSelections] = useState(
-  //     sections.map(() => false)
-  //   );
-  //
-
   const fetchData = async () => {
     try {
       const response = await fetch(API_URL);
@@ -223,36 +233,6 @@ const Home = ({ navigation }) => {
   const uniqueCategories = Array.from(
     new Set(data.map((item) => capitalizeFirstLetter(item.category)))
   );
-  const [selectedCategory, setSelectedCategory] = useState(null); // State to track the selected category
-
-  // Function to filter items based on the selected category
-  // const filterItemsByCategory = () => {
-  //   console.log("Selected Category:", selectedCategory);
-
-  //   if (!selectedCategory) {
-  //     return data; // If no category is selected, return all data
-  //   }
-  //   const lowercaseCategory =
-  //     selectedCategory.charAt(0).toLowerCase() + selectedCategory.slice(1); // Convert first letter to lowercase
-  //   if (!lowercaseCategory) {
-  //     return data; // If no category is selected, return all data
-  //   }
-  //   console.log(lowercaseCategory);
-  //   return data.filter((item) => item.category === lowercaseCategory);
-  // };
-  // const filterItemsByCategory = () => {
-  //   const lowercaseSelectedCategories = selectedCategories.map((category) =>
-  //     category.toLowerCase()
-  //   );
-
-  //   if (lowercaseSelectedCategories.length === 0) {
-  //     return data; // If no category is selected, return all data
-  //   }
-
-  //   return data.filter((item) =>
-  //     lowercaseSelectedCategories.includes(item.category.toLowerCase())
-  //   );
-  // };
 
   const filterItemsByCategory = () => {
     const lowercaseSelectedCategories = selectedCategories.map((category) =>
@@ -282,91 +262,94 @@ const Home = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.menuItemContainer}>
-      <View style={styles.menuItemTextContainer}>
-        <Text style={styles.menuItemTitle}>{item.name}</Text>
-        <Text style={styles.menuItemDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
-        <Text style={styles.menuItemPrice}>${item.price.toFixed(2)}</Text>
+    <TouchableOpacity
+      onPress={() => {
+        // Navigate to MenuItemDetailScreen and pass menu item data as params
+        navigation.navigate("MenuItemDetail", { menuItem: item });
+      }}
+    >
+      <View style={styles.menuItemContainer}>
+        <View style={styles.menuItemTextContainer}>
+          <Text style={styles.menuItemTitle}>{item.name}</Text>
+          <Text style={styles.menuItemDescription} numberOfLines={2}>
+            {item.description}
+          </Text>
+          <Text style={styles.menuItemPrice}>${item.price.toFixed(2)}</Text>
+        </View>
+        <Image
+          source={{ uri: getImageUrl(item.image) }} // Use the getImageUrl function
+          style={styles.menuItemImage}
+          resizeMode="contain"
+        />
       </View>
-      <Image
-        source={{ uri: getImageUrl(item.image) }} // Use the getImageUrl function
-        style={styles.menuItemImage}
-        resizeMode="contain"
-      />
-    </View>
+    </TouchableOpacity>
   );
   return (
-    <>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+    //<>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+    >
+      <ScrollView
+        style={styles.container}
+        // contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
       >
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* <View style={styles.container}> */}
-          <View style={styles.textContainer}>
-            <Text style={styles.header}>Little Lemon</Text>
-            <Text style={styles.subHeader}>Chicago</Text>
-            <Text style={styles.body}>We are a family owned</Text>
-            <Text style={styles.body}>Mediterranean restaurant,</Text>
-            <Text style={styles.body}>focused on traditional</Text>
-            <Text style={styles.body}>receipes served with a </Text>
-            <Text style={styles.body}>modern twist.</Text>
-            <Searchbar
-              style={styles.searchBar}
-              placeholder="Search"
-              placeholderTextColor="#495E57"
-              onChangeText={(query) => setSearchBarText(query)}
-              value={searchBarText}
-              iconColor="#495E57"
-              elevation={0}
-            />
-          </View>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/Hero_image.png")}
-              style={styles.heroImage}
-            />
-          </View>
-          {/* </View> */}
-        </ScrollView>
-
-        <Text style={styles.orderTab}>ORDER FOR DELIVERY!</Text>
-        <View style={styles.tab}>
-          {uniqueCategories.map((category) => (
-            <Pressable
-              key={category}
-              onPress={() => handleCategorySelect(category)}
-            >
-              <Text
-                style={[
-                  styles.tabItem,
-                  selectedCategories.includes(category) &&
-                    styles.selectedCategory, // Apply styles for selected categories
-                ]}
-              >
-                {category}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-
-        <View style={styles.listView}>
-          <FlatList
-            //data={data}
-            data={filterItemsByCategory()} // Pass the filtered items to the FlatList
-            keyExtractor={(item) => item.name} // Assuming 'name' is a unique identifier
-            renderItem={renderItem}
+        {/* <View> */}
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Little Lemon</Text>
+          <Text style={styles.subHeader}>Chicago</Text>
+          <Text style={styles.body}>
+            We are a family owned Mediterranean restaurant,focused on
+            traditional receipes served with a modern twist.
+          </Text>
+          <Searchbar
+            style={styles.searchBar}
+            placeholder="Search"
+            placeholderTextColor="#495E57"
+            onChangeText={(query) => setSearchBarText(query)}
+            value={searchBarText}
+            iconColor="#495E57"
+            elevation={0}
           />
         </View>
-      </KeyboardAvoidingView>
-    </>
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../assets/Hero_image.png")}
+            style={styles.heroImage}
+          />
+        </View>
+      </ScrollView>
+
+      <Text style={styles.orderTab}>ORDER FOR DELIVERY!</Text>
+      <View style={styles.tab}>
+        {uniqueCategories.map((category) => (
+          <Pressable
+            key={category}
+            onPress={() => handleCategorySelect(category)}
+          >
+            <Text
+              style={[
+                styles.tabItem,
+                selectedCategories.includes(category) &&
+                  styles.selectedCategory, // Apply styles for selected categories
+              ]}
+            >
+              {category}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <View style={styles.listView}>
+        <FlatList
+          data={filterItemsByCategory()} // Pass the filtered items to the FlatList
+          keyExtractor={(item) => item.name} // Assuming 'name' is a unique identifier
+          renderItem={renderItem}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({
@@ -390,20 +373,24 @@ const styles = StyleSheet.create({
     color: "#F4CE14",
     marginLeft: 15,
     marginTop: 10,
+    //fontFamily: "MarkaziText",
   },
   subHeader: {
     fontSize: 40,
     color: "#EDEFEE",
     marginLeft: 15,
     marginBottom: 20,
+    // fontFamily: "MarkaziText",
   },
   body: {
-    fontSize: 15,
+    fontSize: 18,
     color: "#EDEFEE",
     marginLeft: 15,
+    width: 190,
+    height: 140,
   },
   searchBar: {
-    marginTop: 35,
+    // marginTop: 55,
     marginLeft: 15,
     borderRadius: 8,
     height: 50,
@@ -413,6 +400,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     justifyContent: "flex-end",
     alignItems: "flex-end", // Align the content to the right side
+    marginBottom: 85,
     flex: 1, // Make it flexible to occupy available space
   },
   heroImage: {
@@ -420,8 +408,8 @@ const styles = StyleSheet.create({
     width: 190,
     resizeMode: "contain",
     borderRadius: 8,
-    marginBottom: 85,
-    marginRight: 5, // Adjust the margin to position it to the right
+    // marginBottom: 85,
+    // marginRight: 5, // Adjust the margin to position it to the right
   },
   orderTab: {
     fontSize: 25,

@@ -4,14 +4,16 @@ import Onboarding from "./screens/Onboarding";
 import Profile from "./screens/Profile";
 import Home from "./screens/Home";
 import SplashScreen from "./screens/Splash";
+import MenuItemDetail from "./screens/MenuItemDetail";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import OrderPage from "./screens/OrderPage";
 const Stack = createNativeStackNavigator();
 function LogoTitle() {
   return (
     <Image
-      source={require("../assets/Logo.png")}
+      source={require("./assets/Logo.png")}
       style={{
         height: 60,
         width: 250,
@@ -68,6 +70,22 @@ export default function App() {
         <Stack.Screen
           name="Profile"
           component={Profile}
+          options={{
+            title: "Profile",
+            headerTitle: (props) => <LogoTitle {...props} />,
+          }}
+        />
+        <Stack.Screen
+          name="MenuItemDetail"
+          component={MenuItemDetail}
+          options={{
+            title: "Profile",
+            headerTitle: (props) => <LogoTitle {...props} />,
+          }}
+        />
+        <Stack.Screen
+          name="OrderPage"
+          component={OrderPage}
           options={{
             title: "Profile",
             headerTitle: (props) => <LogoTitle {...props} />,
