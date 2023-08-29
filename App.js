@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image, StyleSheet, View, Text } from "react-native";
 import Onboarding from "./screens/Onboarding";
 import Profile from "./screens/Profile";
 import Home from "./screens/Home";
@@ -23,10 +23,28 @@ function LogoTitle() {
     />
   );
 }
+
+function RenderInitials({ initials }) {
+  return (
+    <View
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "#495E57", // Background color of the avatar
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 10,
+      }}
+    >
+      <Text style={{ fontSize: 20, color: "#FFFFFF" }}>{initials}</Text>
+    </View>
+  );
+}
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
-
+  const [initials, setInitials] = useState("");
   useEffect(() => {
     // Read the onboarding completion flag from AsyncStorage
     const fetchData = async () => {
@@ -37,6 +55,9 @@ export default function App() {
           const parsedUserInfo = JSON.parse(userInfo);
           const onboardingStatus = parsedUserInfo.isOnboardingComplete;
           console.log("onboardingStatus in App.js:", onboardingStatus);
+          const initials = parsedUserInfo.fName[0] + parsedUserInfo.lName[0];
+          console.log("Initials of the user in App.js : ", initials);
+          setInitials(initials);
           setIsOnboardingComplete(onboardingStatus);
           setIsLoading(false);
         }
@@ -53,9 +74,7 @@ export default function App() {
   console.log("isOnboardingComplete in App.js:", isOnboardingComplete);
   return (
     <NavigationContainer style={styles.container}>
-      <Stack.Navigator
-      // initialRouteName={isOnboardingComplete ? "Home" : "Onboarding"}
-      >
+      <Stack.Navigator>
         {isOnboardingComplete ? (
           <>
             <Stack.Screen
@@ -73,6 +92,9 @@ export default function App() {
                 title: "Profile",
                 headerLeft: null, // This hides the back button for YourScreen
                 headerTitle: (props) => <LogoTitle {...props} />,
+                headerRight: (props) => (
+                  <RenderInitials {...props} initials={initials} />
+                ),
               }}
             />
             <Stack.Screen
@@ -81,6 +103,9 @@ export default function App() {
               options={{
                 title: "Menu",
                 headerTitle: (props) => <LogoTitle {...props} />,
+                headerRight: (props) => (
+                  <RenderInitials {...props} initials={initials} />
+                ),
               }}
             />
             <Stack.Screen
@@ -88,8 +113,10 @@ export default function App() {
               component={OrderPage}
               options={{
                 title: "Orders",
-
                 headerTitle: (props) => <LogoTitle {...props} />,
+                headerRight: (props) => (
+                  <RenderInitials {...props} initials={initials} />
+                ),
               }}
             />
           </>

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   text: {
     padding: 8,
-    fontFamily: "Markazi",
+    // fontFamily: "Markazi",
     fontSize: 20,
     fontWeight: "bold",
     color: "#495E57",
