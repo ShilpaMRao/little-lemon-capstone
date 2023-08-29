@@ -29,6 +29,33 @@ const OrderPage = ({ navigation }) => {
   const route = useRoute();
   const { menuItem } = route.params; // Get menu item data from route params
   console.log("MenuItems in orderpage.js : ", menuItem);
+  // Create a map to store consolidated items
+  const consolidatedItemsMap = new Map();
+
+  // Iterate through the original array
+  menuItem.forEach((item) => {
+    const itemName = item.name;
+    const itemPrice = item.price;
+    const itemQuantity = item.quantity;
+
+    // If the item name is already in the map, update the quantity
+    if (consolidatedItemsMap.has(itemName)) {
+      const existingItem = consolidatedItemsMap.get(itemName);
+      existingItem.quantity += itemQuantity;
+    } else {
+      // If it's not in the map, add it with the current values
+      consolidatedItemsMap.set(itemName, {
+        name: itemName,
+        price: itemPrice,
+        quantity: itemQuantity,
+      });
+    }
+  });
+  // Convert the consolidated items map back to an array
+  const consolidatedItems = Array.from(consolidatedItemsMap.values());
+
+  // Now, consolidatedItems contains the items with quantities updated
+  console.log(consolidatedItems);
   const getImageUrl = (imageFileName) => {
     return `${BASE_IMAGE_URL}${imageFileName}?raw=true`;
   };
@@ -113,7 +140,7 @@ const OrderPage = ({ navigation }) => {
         </View>
         <View style={styles.orderContainer}>
           <FlatList
-            data={menuItem}
+            data={consolidatedItems}
             renderItem={renderOrderDetails}
             keyExtractor={(item) => item.id}
           />
@@ -129,11 +156,13 @@ const OrderPage = ({ navigation }) => {
         />
       </View>
       <View style={styles.container}>
-        <FlatList
-          data={cost}
-          renderItem={renderTotal}
-          keyExtractor={(item) => item.id}
-        />
+        {consolidatedItems.length > 0 && (
+          <FlatList
+            data={cost}
+            renderItem={renderTotal}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </View>
       <Button
         style={styles.button}

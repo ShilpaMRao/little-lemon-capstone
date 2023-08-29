@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Image, StyleSheet, View, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Image, StyleSheet, View, Text, Pressable } from "react-native";
 import Onboarding from "./screens/Onboarding";
 import Profile from "./screens/Profile";
 import Home from "./screens/Home";
@@ -25,6 +26,7 @@ function LogoTitle() {
 }
 
 function RenderInitials({ initials }) {
+  const inUpperCaseInitials = initials.toUpperCase();
   return (
     <View
       style={{
@@ -37,14 +39,33 @@ function RenderInitials({ initials }) {
         marginRight: 10,
       }}
     >
-      <Text style={{ fontSize: 20, color: "#FFFFFF" }}>{initials}</Text>
+      <Text style={{ fontSize: 20, color: "#FFFFFF" }}>
+        {inUpperCaseInitials}
+      </Text>
     </View>
   );
 }
+const CustomHeader = ({ navigation, initials }) => {
+  return (
+    <View style={{ flexDirection: "row" }}>
+      <Pressable
+        onPress={() => {
+          // Handle the press event here, e.g., navigate to another screen
+          navigation.navigate("Profile");
+        }}
+      >
+        {/* Add your Pressable content here */}
+        <RenderInitials initials={initials} />
+      </Pressable>
+    </View>
+  );
+};
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
   const [initials, setInitials] = useState("");
+  // const navigation = useNavigation();
   useEffect(() => {
     // Read the onboarding completion flag from AsyncStorage
     const fetchData = async () => {
@@ -78,14 +99,6 @@ export default function App() {
         {isOnboardingComplete ? (
           <>
             <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{
-                title: "Home",
-                headerTitle: (props) => <LogoTitle {...props} />,
-              }}
-            />
-            <Stack.Screen
               name="Profile"
               component={Profile}
               options={{
@@ -98,14 +111,26 @@ export default function App() {
               }}
             />
             <Stack.Screen
+              name="Home"
+              component={Home}
+              options={({ route, navigation }) => ({
+                title: "Home",
+                headerTitle: (props) => <LogoTitle {...props} />,
+                // headerRight: () => (
+                //   <CustomHeader navigation={navigation} initials={initials} />
+                // ),
+              })}
+            />
+
+            <Stack.Screen
               name="MenuItemDetail"
               component={MenuItemDetail}
               options={{
                 title: "Menu",
                 headerTitle: (props) => <LogoTitle {...props} />,
-                headerRight: (props) => (
-                  <RenderInitials {...props} initials={initials} />
-                ),
+                // headerRight: () => (
+                //   <CustomHeader navigation={navigation} initials={initials} />
+                // ),
               }}
             />
             <Stack.Screen
@@ -114,9 +139,9 @@ export default function App() {
               options={{
                 title: "Orders",
                 headerTitle: (props) => <LogoTitle {...props} />,
-                headerRight: (props) => (
-                  <RenderInitials {...props} initials={initials} />
-                ),
+                // headerRight: () => (
+                //   <CustomHeader navigation={navigation} initials={initials} />
+                // ),
               }}
             />
           </>

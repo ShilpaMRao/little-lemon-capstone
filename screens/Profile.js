@@ -41,9 +41,9 @@ const Profile = ({ navigation }) => {
         console.log("UserInfo in Profile.js: ", userInfo);
         if (userInfo) {
           const parsedUserInfo = JSON.parse(userInfo);
-          setFName(parsedUserInfo.firstName);
-          setLName(parsedUserInfo.lastName);
-          setEml(parsedUserInfo.email);
+          setFName(parsedUserInfo.fName);
+          setLName(parsedUserInfo.lName);
+          setEml(parsedUserInfo.eml);
         }
       } catch (error) {
         console.error("Error fetching user info:", error);

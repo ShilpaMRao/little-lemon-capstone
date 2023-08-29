@@ -36,10 +36,14 @@ const MenuItemDetail = ({ navigation }) => {
       updatedSelectedItems = [...selectedItems, selectedItem];
     }
     setCount(1);
-
-    navigation.navigate("OrderPage", {
-      menuItem: updatedSelectedItems,
-    });
+    console.log("selected items :", updatedSelectedItems);
+    if (count > 0) {
+      navigation.navigate("OrderPage", {
+        menuItem: updatedSelectedItems,
+      });
+    } else {
+      navigation.navigate("OrderPage", { menuItem: selectedItems });
+    }
   };
   return (
     <View style={styles.container}>
