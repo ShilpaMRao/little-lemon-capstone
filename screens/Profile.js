@@ -150,6 +150,7 @@ const Profile = ({ navigation }) => {
           passwordChanges: toggleCheckBoxPasswordChanges,
           specialOffers: toggleCheckBoxSpecialOffers,
           newsletter: toggleCheckBoxNewsletters,
+          isOnboardingComplete: true,
         })
       );
       // Retrieve and log the saved userInfo

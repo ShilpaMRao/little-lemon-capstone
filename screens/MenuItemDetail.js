@@ -24,18 +24,20 @@ const MenuItemDetail = ({ navigation }) => {
     if (count > 0) setCount((prevCount) => prevCount - 1);
   };
   const handleOrderPage = () => {
-    const selectedItem = {
-      name: menuItem.name,
-      quantity: count,
-      price: menuItem.price * count,
-    };
-
-    setSelectedItems([...selectedItems, selectedItem]);
-    const updatedSelectedItems = [...selectedItems, selectedItem];
+    let selectedItem = null;
+    let updatedSelectedItems = null;
+    if (count > 0) {
+      selectedItem = {
+        name: menuItem.name,
+        quantity: count,
+        price: menuItem.price * count,
+      };
+      setSelectedItems([...selectedItems, selectedItem]);
+      updatedSelectedItems = [...selectedItems, selectedItem];
+    }
     setCount(1);
+
     navigation.navigate("OrderPage", {
-      // menuItem: menuItem,
-      // selectedItems: updatedSelectedItems,
       menuItem: updatedSelectedItems,
     });
   };

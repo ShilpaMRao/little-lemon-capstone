@@ -36,7 +36,7 @@ export default function App() {
         if (userInfo) {
           const parsedUserInfo = JSON.parse(userInfo);
           const onboardingStatus = parsedUserInfo.isOnboardingComplete;
-          console.log("isOnboardingComplete in App.js:", onboardingStatus);
+          console.log("onboardingStatus in App.js:", onboardingStatus);
           setIsOnboardingComplete(onboardingStatus);
           setIsLoading(false);
         }
@@ -54,48 +54,48 @@ export default function App() {
   return (
     <NavigationContainer style={styles.container}>
       <Stack.Navigator
-        initialRouteName={isOnboardingComplete ? "Home" : "Onboarding"}
+      // initialRouteName={isOnboardingComplete ? "Home" : "Onboarding"}
       >
-        {/* {isOnboardingComplete ? ( */}
-        {/* // Onboarding completed, user is signed in */}
-        {/* <> */}
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            title: "Home",
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            title: "Profile",
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        <Stack.Screen
-          name="MenuItemDetail"
-          component={MenuItemDetail}
-          options={{
-            title: "Profile",
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        <Stack.Screen
-          name="OrderPage"
-          component={OrderPage}
-          options={{
-            title: "Profile",
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        {/* </> */}
-        {/* ) : ( */}
-        {/* // User is NOT signed in */}
-        <Stack.Screen name="Onboarding" component={Onboarding} />
-        {/* )} */}
+        {isOnboardingComplete ? (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                title: "Home",
+                headerTitle: (props) => <LogoTitle {...props} />,
+              }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={Profile}
+              options={{
+                title: "Profile",
+                headerLeft: null, // This hides the back button for YourScreen
+                headerTitle: (props) => <LogoTitle {...props} />,
+              }}
+            />
+            <Stack.Screen
+              name="MenuItemDetail"
+              component={MenuItemDetail}
+              options={{
+                title: "Menu",
+                headerTitle: (props) => <LogoTitle {...props} />,
+              }}
+            />
+            <Stack.Screen
+              name="OrderPage"
+              component={OrderPage}
+              options={{
+                title: "Orders",
+
+                headerTitle: (props) => <LogoTitle {...props} />,
+              }}
+            />
+          </>
+        ) : (
+          <Stack.Screen name="Onboarding" component={Onboarding} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

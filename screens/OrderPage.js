@@ -7,6 +7,7 @@ import {
   Image,
   View,
   Dimensions,
+  Alert,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
@@ -27,7 +28,7 @@ const OrderPage = ({ navigation }) => {
 
   const route = useRoute();
   const { menuItem } = route.params; // Get menu item data from route params
-  //   console.log("MenuItems in orderpage.js : ", menuItem);
+  console.log("MenuItems in orderpage.js : ", menuItem);
   const getImageUrl = (imageFileName) => {
     return `${BASE_IMAGE_URL}${imageFileName}?raw=true`;
   };
@@ -94,6 +95,11 @@ const OrderPage = ({ navigation }) => {
       <Text style={styles.orderPlacedPrice}>${item.price.toFixed(2)}</Text>
     </View>
   );
+  const handleCheckout = () => {
+    Alert.alert(
+      "Your Order will be with you shortly. Thank you for your business!"
+    );
+  };
   return (
     <View style={styles.container}>
       <View>
@@ -129,7 +135,12 @@ const OrderPage = ({ navigation }) => {
           keyExtractor={(item) => item.id}
         />
       </View>
-      <Button style={styles.button} textColor={"#495E57"} textFont={"bold"}>
+      <Button
+        style={styles.button}
+        textColor={"#495E57"}
+        textFont={"bold"}
+        onPress={handleCheckout}
+      >
         CheckOut
       </Button>
     </View>
