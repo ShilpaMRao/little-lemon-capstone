@@ -56,6 +56,7 @@ const OrderPage = ({ navigation }) => {
 
   // Now, consolidatedItems contains the items with quantities updated
   console.log(consolidatedItems);
+
   const getImageUrl = (imageFileName) => {
     return `${BASE_IMAGE_URL}${imageFileName}?raw=true`;
   };
@@ -156,6 +157,7 @@ const OrderPage = ({ navigation }) => {
         />
       </View>
       <View style={styles.container}>
+        {/* if there are no orders , don't print the bill */}
         {consolidatedItems.length > 0 && (
           <FlatList
             data={cost}

@@ -138,63 +138,63 @@ const Home = ({ navigation }) => {
   // const [fontsKarla] = Font.useFonts({
   //   MarkaziText: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/MarkaziText-Regular.ttf"),
   // });
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch user info from AsyncStorage
-        const userInfo = await AsyncStorage.getItem("userInfo");
-        console.log("UserInfo in Home.js----> ", userInfo);
-        if (userInfo) {
-          const parsedUserInfo = JSON.parse(userInfo);
-          setFName(parsedUserInfo.fName);
-          setLName(parsedUserInfo.lName);
-          // Calculate initials
-          console.log("----", parsedUserInfo.fName);
-          console.log(parsedUserInfo.lName);
-          const initials =
-            `${parsedUserInfo.fName[0]}${parsedUserInfo.lName[0]}`.toUpperCase();
-          console.log("------>", initials);
-          setUserInitials(initials);
-          // await Font.loadAsync({
-          //   Karla:require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/Karla-Regular.ttf"),
-          // });
-          // await Font.loadAsync({
-          //   MarkaziText: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/MarkaziText-Regular.ttf"),
-          // });
-        }
-      } catch (error) {
-        console.error("Error fetching user info in Home.js:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // Fetch user info from AsyncStorage
+  //       const userInfo = await AsyncStorage.getItem("userInfo");
+  //       console.log("UserInfo in Home.js----> ", userInfo);
+  //       if (userInfo) {
+  //         const parsedUserInfo = JSON.parse(userInfo);
+  //         setFName(parsedUserInfo.firstName);
+  //         setLName(parsedUserInfo.lastName);
+  //         // Calculate initials
+  //         console.log("----", parsedUserInfo.firstName);
+  //         console.log(parsedUserInfo.lastName);
+  //         const initials =
+  //           `${parsedUserInfo.firstName[0]}${parsedUserInfo.lastName[0]}`.toUpperCase();
+  //         console.log("------>", initials);
+  //         setUserInitials(initials);
+  //         // await Font.loadAsync({
+  //         //   Karla:require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/Karla-Regular.ttf"),
+  //         // });
+  //         // await Font.loadAsync({
+  //         //   MarkaziText: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/MarkaziText-Regular.ttf"),
+  //         // });
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user info in Home.js:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  React.useLayoutEffect(() => {
-    // console.log("Name in useLayoutEffect : ", userInitials);
-    navigation.setOptions({
-      //headerTitle: "Home",
-      // headerTitle: (props) => <LogoTitle {...props} />,
-      headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          {/* {user.avatar ? (
-            <Image
-              // source={{ uri: user.avatar }}
-              source={require("../assets/Profile.png")}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-                marginRight: 10,
-              }}
-            />
-          ) : ( */}
-          {renderInitialsAvatar(userInitials)}
-          {/* )} */}
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, userInitials]);
+  // React.useLayoutEffect(() => {
+  //   // console.log("Name in useLayoutEffect : ", userInitials);
+  //   navigation.setOptions({
+  //     //headerTitle: "Home",
+  //     // headerTitle: (props) => <LogoTitle {...props} />,
+  //     headerRight: () => (
+  //       <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+  //         {/* {user.avatar ? (
+  //           <Image
+  //             // source={{ uri: user.avatar }}
+  //             source={require("../assets/Profile.png")}
+  //             style={{
+  //               width: 40,
+  //               height: 40,
+  //               borderRadius: 20,
+  //               marginRight: 10,
+  //             }}
+  //           />
+  //         ) : ( */}
+  //         {renderInitialsAvatar(userInitials)}
+  //         {/* )} */}
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // }, [navigation, userInitials]);
 
   const handleCategorySelect = (category) => {
     if (selectedCategories.includes(category)) {

@@ -41,9 +41,9 @@ const Profile = ({ navigation }) => {
         console.log("UserInfo in Profile.js: ", userInfo);
         if (userInfo) {
           const parsedUserInfo = JSON.parse(userInfo);
-          setFName(parsedUserInfo.fName);
-          setLName(parsedUserInfo.lName);
-          setEml(parsedUserInfo.eml);
+          setFName(parsedUserInfo.firstName);
+          setLName(parsedUserInfo.lastName);
+          setEml(parsedUserInfo.email);
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -142,10 +142,10 @@ const Profile = ({ navigation }) => {
       await AsyncStorage.setItem(
         "userInfo",
         JSON.stringify({
-          fName,
-          lName,
-          eml,
-          phone,
+          firstName: fName,
+          lastName: lName,
+          email: eml,
+          phone: phone,
           orderStatuses: toggleCheckBoxOrderStatuses,
           passwordChanges: toggleCheckBoxPasswordChanges,
           specialOffers: toggleCheckBoxSpecialOffers,

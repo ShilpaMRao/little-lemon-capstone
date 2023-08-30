@@ -1,6 +1,8 @@
+import "react-native-gesture-handler";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, View, Text, Pressable } from "react-native";
+
 import Onboarding from "./screens/Onboarding";
 import Profile from "./screens/Profile";
 import Home from "./screens/Home";
@@ -76,14 +78,15 @@ export default function App() {
           const parsedUserInfo = JSON.parse(userInfo);
           const onboardingStatus = parsedUserInfo.isOnboardingComplete;
           console.log("onboardingStatus in App.js:", onboardingStatus);
-          const initials = parsedUserInfo.fName[0] + parsedUserInfo.lName[0];
+          const initials =
+            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0];
           console.log("Initials of the user in App.js : ", initials);
           setInitials(initials);
           setIsOnboardingComplete(onboardingStatus);
           setIsLoading(false);
         }
       } catch (error) {
-        console.error("Error reading onboarding status:", error);
+        console.error("Error reading onboarding status in App.js:", error);
         setIsLoading(false);
       }
     };
@@ -95,9 +98,45 @@ export default function App() {
   console.log("isOnboardingComplete in App.js:", isOnboardingComplete);
   return (
     <NavigationContainer style={styles.container}>
-      <Stack.Navigator>
+      <Stack.Navigator
+        initialRouteName={isOnboardingComplete ? "Home" : "Onboarding"}
+      >
         {isOnboardingComplete ? (
           <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={({ route, navigation }) => ({
+                title: "Home",
+                headerTitle: (props) => <LogoTitle {...props} />,
+                headerRight: () => (
+                  <CustomHeader navigation={navigation} initials={initials} />
+                ),
+              })}
+            />
+
+            <Stack.Screen
+              name="MenuItemDetail"
+              component={MenuItemDetail}
+              options={({ route, navigation }) => ({
+                title: "Menu",
+                headerTitle: (props) => <LogoTitle {...props} />,
+                headerRight: () => (
+                  <CustomHeader navigation={navigation} initials={initials} />
+                ),
+              })}
+            />
+            <Stack.Screen
+              name="OrderPage"
+              component={OrderPage}
+              options={({ route, navigation }) => ({
+                title: "Orders",
+                headerTitle: (props) => <LogoTitle {...props} />,
+                headerRight: () => (
+                  <CustomHeader navigation={navigation} initials={initials} />
+                ),
+              })}
+            />
             <Stack.Screen
               name="Profile"
               component={Profile}
@@ -108,40 +147,6 @@ export default function App() {
                 headerRight: (props) => (
                   <RenderInitials {...props} initials={initials} />
                 ),
-              }}
-            />
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={({ route, navigation }) => ({
-                title: "Home",
-                headerTitle: (props) => <LogoTitle {...props} />,
-                // headerRight: () => (
-                //   <CustomHeader navigation={navigation} initials={initials} />
-                // ),
-              })}
-            />
-
-            <Stack.Screen
-              name="MenuItemDetail"
-              component={MenuItemDetail}
-              options={{
-                title: "Menu",
-                headerTitle: (props) => <LogoTitle {...props} />,
-                // headerRight: () => (
-                //   <CustomHeader navigation={navigation} initials={initials} />
-                // ),
-              }}
-            />
-            <Stack.Screen
-              name="OrderPage"
-              component={OrderPage}
-              options={{
-                title: "Orders",
-                headerTitle: (props) => <LogoTitle {...props} />,
-                // headerRight: () => (
-                //   <CustomHeader navigation={navigation} initials={initials} />
-                // ),
               }}
             />
           </>

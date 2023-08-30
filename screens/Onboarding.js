@@ -34,8 +34,9 @@ const Onboarding = ({ navigation }) => {
           isOnboardingComplete: true,
         })
       );
-
+      console.log("User details stored successfully in AsyncStorage");
       navigation.navigate("Profile");
+      console.log("Navigated to 'Profile'");
       setFirstName("");
       setLastName("");
       setEmail("");
