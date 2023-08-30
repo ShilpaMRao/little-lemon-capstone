@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 import { Image, ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Hero from "../components/Hero";
+import { View } from "react-native";
 
 const Onboarding = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -54,44 +55,38 @@ const Onboarding = ({ navigation }) => {
   // }
   return (
     <ScrollView style={styles.container}>
-      {/* <Image
-        style={styles.img}
-        source={require("../assets/Logo.png")}
-        resizeMode="contain"
-        accessible={true}
-        accessibilityLabel="Little Lemon Logo"
-      />
-      <Text style={styles.introText}>Let us get to know you</Text> */}
       <Hero />
+      <View style={styles.content}>
+        <Text style={styles.introText}>Let us get to know you</Text>
+        <Text style={styles.text}>First Name</Text>
+        <TextInput
+          style={styles.textInput}
+          value={firstName}
+          onChangeText={setFirstName}
+        />
 
-      <Text style={styles.text}>First Name</Text>
-      <TextInput
-        style={styles.textInput}
-        value={firstName}
-        onChangeText={setFirstName}
-      />
+        <Text style={styles.text}>Last Name</Text>
+        <TextInput
+          style={styles.textInput}
+          value={lastName}
+          onChangeText={setLastName}
+        />
+        <Text style={styles.text}>Email</Text>
+        <TextInput
+          style={styles.textInput}
+          value={email}
+          keyboardType="email-address"
+          onChangeText={setEmail}
+        />
 
-      <Text style={styles.text}>Last Name</Text>
-      <TextInput
-        style={styles.textInput}
-        value={lastName}
-        onChangeText={setLastName}
-      />
-      <Text style={styles.text}>Email</Text>
-      <TextInput
-        style={styles.textInput}
-        value={email}
-        keyboardType="email-address"
-        onChangeText={setEmail}
-      />
-
-      <Button
-        style={styles.button}
-        onPress={handleNext}
-        disabled={!isFormValid()}
-      >
-        Next
-      </Button>
+        <Button
+          style={styles.button}
+          onPress={handleNext}
+          disabled={!isFormValid()}
+        >
+          Next
+        </Button>
+      </View>
     </ScrollView>
   );
 };
@@ -99,6 +94,10 @@ const Onboarding = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    flex: 1, // Make the content flex to occupy the remaining space
+    marginTop: 20,
   },
   img: {
     height: 150,
@@ -111,7 +110,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#495E57",
     textAlign: "center",
-    marginVertical: 40,
   },
   text: {
     padding: 8,

@@ -16,12 +16,11 @@ const Hero = () => {
           receipes served with a modern twist.
         </Text>
       </View>
-      <View style={styles.imageContainer}>
-        <Image
-          source={require("../assets/Hero_image.png")}
-          style={styles.heroImage}
-        />
-      </View>
+
+      <Image
+        source={require("../assets/Hero_image.png")}
+        style={styles.heroImage}
+      />
     </View>
   );
 };

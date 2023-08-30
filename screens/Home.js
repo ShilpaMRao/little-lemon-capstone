@@ -31,6 +31,7 @@ import { getSectionListData, useUpdateEffect } from "../utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Font from "expo-font";
 import RenderInitials from "../utils/RenderInitials";
+import Hero from "../components/Hero";
 const sections = ["Appetizers", "Salads", "Beverages"];
 const API_URL =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -196,32 +197,6 @@ const Home = ({ navigation }) => {
     }
   };
 
-  // React.useLayoutEffect(() => {
-  //   // console.log("Name in useLayoutEffect : ", userInitials);
-  //   navigation.setOptions({
-  //     //headerTitle: "Home",
-  //     // headerTitle: (props) => <LogoTitle {...props} />,
-  //     headerRight: () => (
-  //       <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-  //         {/* {user.avatar ? (
-  //           <Image
-  //             // source={{ uri: user.avatar }}
-  //             source={require("../assets/Profile.png")}
-  //             style={{
-  //               width: 40,
-  //               height: 40,
-  //               borderRadius: 20,
-  //               marginRight: 10,
-  //             }}
-  //           />
-  //         ) : ( */}
-  //         {renderInitialsAvatar(userInitials)}
-  //         {/* )} */}
-  //       </TouchableOpacity>
-  //     ),
-  //   });
-  // }, [navigation, userInitials]);
-
   // Fetch data when the component mounts
   useEffect(() => {
     fetchData();
@@ -289,58 +264,46 @@ const Home = ({ navigation }) => {
     </TouchableOpacity>
   );
   return (
-    //<>
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.textContainer}>
-          <Text style={styles.header}>Little Lemon</Text>
-          <Text style={styles.subHeader}>Chicago</Text>
-          <Text style={styles.body}>
-            We are a family owned Mediterranean restaurant,focused on
-            traditional receipes served with a modern twist.
-          </Text>
-          <Searchbar
-            style={styles.searchBar}
-            placeholder="Search"
-            placeholderTextColor="#495E57"
-            onChangeText={(query) => setSearchBarText(query)}
-            value={searchBarText}
-            iconColor="#495E57"
-            elevation={0}
-          />
-        </View>
-        <View style={styles.imageContainer}>
-          <Image
-            source={require("../assets/Hero_image.png")}
-            style={styles.heroImage}
-          />
-        </View>
+        <Hero />
+        <Searchbar
+          style={styles.searchBar}
+          placeholder="Search"
+          placeholderTextColor="#495E57"
+          onChangeText={(query) => setSearchBarText(query)}
+          value={searchBarText}
+          iconColor="#495E57"
+          elevation={0}
+        />
       </ScrollView>
 
-      <Text style={styles.orderTab}>ORDER FOR DELIVERY!</Text>
-      <View style={styles.tab}>
-        {uniqueCategories.map((category) => (
-          <Pressable
-            key={category}
-            onPress={() => handleCategorySelect(category)}
-          >
-            <Text
-              style={[
-                styles.tabItem,
-                selectedCategories.includes(category) &&
-                  styles.selectedCategory, // Apply styles for selected categories
-              ]}
+      <View style={styles.categoryContainer}>
+        <Text style={styles.orderTab}>ORDER FOR DELIVERY!</Text>
+        <View style={styles.tab}>
+          {uniqueCategories.map((category) => (
+            <Pressable
+              key={category}
+              onPress={() => handleCategorySelect(category)}
             >
-              {category}
-            </Text>
-          </Pressable>
-        ))}
+              <Text
+                style={[
+                  styles.tabItem,
+                  selectedCategories.includes(category) &&
+                    styles.selectedCategory, // Apply styles for selected categories
+                ]}
+              >
+                {category}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
       </View>
-
+      {/* </ScrollView> */}
       <View style={styles.listView}>
         <FlatList
           data={filterItemsByCategory()} // Pass the filtered items to the FlatList
@@ -353,56 +316,20 @@ const Home = ({ navigation }) => {
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 0.3,
+    flex: 1,
     backgroundColor: "#495E57",
-    flexDirection: "row",
   },
 
-  textContainer: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  header: {
-    fontSize: 45,
-    color: "#F4CE14",
-    marginLeft: 15,
-    marginTop: 10,
-    //fontFamily: "MarkaziText",
-  },
-  subHeader: {
-    fontSize: 40,
-    color: "#EDEFEE",
-    marginLeft: 15,
-    marginBottom: 20,
-    // fontFamily: "MarkaziText",
-  },
-  body: {
-    fontSize: 18,
-    color: "#EDEFEE",
-    marginLeft: 15,
-    width: 190,
-    height: 140,
-  },
   searchBar: {
     marginLeft: 15,
     borderRadius: 8,
     height: 50,
     width: 380,
     color: "#495E57",
+    marginBottom: 10,
   },
-  imageContainer: {
-    justifyContent: "flex-end",
-    alignItems: "flex-end", // Align the content to the right side
-    marginBottom: 85,
-    flex: 1, // Make it flexible to occupy available space
-  },
-  heroImage: {
-    height: 190,
-    width: 190,
-    resizeMode: "contain",
-    borderRadius: 8,
-    // marginBottom: 85,
-    // marginRight: 5, // Adjust the margin to position it to the right
+  categoryContainer: {
+    backgroundColor: "white",
   },
   orderTab: {
     fontSize: 25,

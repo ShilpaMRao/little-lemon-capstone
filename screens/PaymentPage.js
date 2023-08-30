@@ -57,7 +57,10 @@ const PaymentPage = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <Hero />
       <View style={styles.content}>
-        <Text style={styles.textContainer}>Payment</Text>
+        <Text style={styles.textContainer}>
+          Thank you for your payment. Your order will be delivered to you
+          shortly!
+        </Text>
         {/* Other content goes here */}
       </View>
     </ScrollView>
@@ -73,6 +76,11 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     fontSize: 40,
+    padding: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#495E57",
+    marginTop: 120,
   },
 });
 

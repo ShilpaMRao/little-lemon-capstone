@@ -167,9 +167,6 @@ const OrderPage = ({ navigation }) => {
     </View>
   );
   const handleCheckout = () => {
-    Alert.alert(
-      "Your Order will be with you shortly. Thank you for your business!"
-    );
     navigation.navigate("PaymentPage");
   };
   return (
