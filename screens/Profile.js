@@ -11,9 +11,13 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Button";
+
 import CheckBox from "expo-checkbox";
 import * as ImagePicker from "expo-image-picker";
 import { validatePhone } from "../utils";
+import RenderInitials from "../utils/RenderInitials";
+import { useLayoutEffect } from "react";
+import { Pressable } from "react-native";
 
 const Profile = ({ navigation }) => {
   const [fName, setFName] = useState("");
@@ -30,8 +34,10 @@ const Profile = ({ navigation }) => {
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState(null);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const [initials, setInitials] = useState("");
 
   const isPhonenumberValid = validatePhone(phone);
+
   // getting the user info from the AsyncStorage
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +50,10 @@ const Profile = ({ navigation }) => {
           setFName(parsedUserInfo.firstName);
           setLName(parsedUserInfo.lastName);
           setEml(parsedUserInfo.email);
+          const userInitials = (
+            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
+          ).toUpperCase();
+          setInitials(userInitials);
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -52,6 +62,25 @@ const Profile = ({ navigation }) => {
 
     fetchData();
   }, []);
+  // Use useLayoutEffect to configure the header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: null,
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Pressable
+            onPress={() => {
+              // Handle the press event here, e.g., navigate to another screen
+              navigation.navigate("Profile");
+            }}
+          >
+            {/* Add your Pressable content here */}
+            <RenderInitials initials={initials} />
+          </Pressable>
+        </View>
+      ),
+    });
+  }, [navigation, initials]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -78,11 +107,12 @@ const Profile = ({ navigation }) => {
         />
       );
     } else {
-      const initials = `${fName} ${lName}`
-        .split(" ")
-        .map((namePart) => namePart[0])
-        .join("")
-        .toUpperCase();
+      // const initials = `${fName} ${lName}`
+      //   .split(" ")
+      //   .map((namePart) => namePart[0])
+      //   .join("")
+      //   .toUpperCase();
+
       return (
         <View
           style={{
@@ -103,10 +133,13 @@ const Profile = ({ navigation }) => {
       );
     }
   };
+
   const handleLogout = async () => {
     try {
       // Clear all stored data in AsyncStorage
       await AsyncStorage.clear();
+      const savedUserInfo = await AsyncStorage.getItem("userInfo");
+      console.log("Saved UserInfo after logging out:", savedUserInfo);
       setIsLoggedOut(true);
       setToggleCheckBoxPasswordChanges(false);
       setToggleCheckBoxOrderStatuses(false);
@@ -269,6 +302,11 @@ const Profile = ({ navigation }) => {
     </ScrollView>
   );
 };
+Profile.navigationOptions = ({ navigation }) => ({
+  headerRight: () => (
+    <InitialsAvatar navigation={navigation} initials="AB" /> // Pass the user's initials here
+  ),
+});
 const styles = StyleSheet.create({
   container: {
     flex: 1,

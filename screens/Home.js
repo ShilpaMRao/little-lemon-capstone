@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useLayoutEffect,
+} from "react";
 import {
   Image,
   Pressable,
@@ -24,6 +30,7 @@ import Filters from "../components/Filters";
 import { getSectionListData, useUpdateEffect } from "../utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Font from "expo-font";
+import RenderInitials from "../utils/RenderInitials";
 const sections = ["Appetizers", "Salads", "Beverages"];
 const API_URL =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -123,52 +130,71 @@ const renderInitialsAvatar = (userInitials) => {
 };
 
 const Home = ({ navigation }) => {
-  const [fName, setFName] = useState("");
-  const [lName, setLName] = useState("");
-  const [userInitials, setUserInitials] = useState("");
   const [data, setData] = useState([]);
+
   const [searchBarText, setSearchBarText] = useState("");
-  const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
-  // const navigation = useNavigation();
+  //--------------Logic to render Avatar on the top right of the header -------//
+  const [initials, setInitials] = useState("");
+  useEffect(() => {
+    const fetchUserInitials = async () => {
+      try {
+        const UserInfo = await AsyncStorage.getItem("userInfo");
+        if (UserInfo) {
+          const parsedUserInfo = JSON.parse(UserInfo);
+          const userInitials = (
+            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
+          ).toUpperCase();
+          setInitials(userInitials);
+        }
+      } catch (error) {
+        console.error("Error fetching user initials:", error);
+      }
+    };
 
-  // const [fontsLoaded] = Font.useFonts({
-  //   Karla: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/Karla-Regular.ttf"),
-  // });
-  // const [fontsKarla] = Font.useFonts({
-  //   MarkaziText: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/MarkaziText-Regular.ttf"),
-  // });
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // Fetch user info from AsyncStorage
-  //       const userInfo = await AsyncStorage.getItem("userInfo");
-  //       console.log("UserInfo in Home.js----> ", userInfo);
-  //       if (userInfo) {
-  //         const parsedUserInfo = JSON.parse(userInfo);
-  //         setFName(parsedUserInfo.firstName);
-  //         setLName(parsedUserInfo.lastName);
-  //         // Calculate initials
-  //         console.log("----", parsedUserInfo.firstName);
-  //         console.log(parsedUserInfo.lastName);
-  //         const initials =
-  //           `${parsedUserInfo.firstName[0]}${parsedUserInfo.lastName[0]}`.toUpperCase();
-  //         console.log("------>", initials);
-  //         setUserInitials(initials);
-  //         // await Font.loadAsync({
-  //         //   Karla:require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/Karla-Regular.ttf"),
-  //         // });
-  //         // await Font.loadAsync({
-  //         //   MarkaziText: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/font/MarkaziText-Regular.ttf"),
-  //         // });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user info in Home.js:", error);
-  //     }
-  //   };
+    fetchUserInitials();
+  }, []);
 
-  //   fetchData();
-  // }, []);
+  // Use useLayoutEffect to configure the header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Pressable
+            onPress={() => {
+              // Handle the press event here, e.g., navigate to another screen
+              navigation.navigate("Profile");
+            }}
+          >
+            {/* Add your Pressable content here */}
+            <RenderInitials initials={initials} />
+          </Pressable>
+        </View>
+      ),
+    });
+  }, [navigation, initials]);
+  //----------------------------------------------------------//
+  const handleCategorySelect = (category) => {
+    if (selectedCategories.includes(category)) {
+      // If category is already selected, remove it
+      setSelectedCategories((prevCategories) =>
+        prevCategories.filter((cat) => cat !== category)
+      );
+    } else {
+      // If category is not selected, add it
+      setSelectedCategories((prevCategories) => [...prevCategories, category]);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const jsonData = await response.json();
+      setData(jsonData.menu); // Store the fetched data in the state variable
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
 
   // React.useLayoutEffect(() => {
   //   // console.log("Name in useLayoutEffect : ", userInitials);
@@ -195,28 +221,6 @@ const Home = ({ navigation }) => {
   //     ),
   //   });
   // }, [navigation, userInitials]);
-
-  const handleCategorySelect = (category) => {
-    if (selectedCategories.includes(category)) {
-      // If category is already selected, remove it
-      setSelectedCategories((prevCategories) =>
-        prevCategories.filter((cat) => cat !== category)
-      );
-    } else {
-      // If category is not selected, add it
-      setSelectedCategories((prevCategories) => [...prevCategories, category]);
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch(API_URL);
-      const jsonData = await response.json();
-      setData(jsonData.menu); // Store the fetched data in the state variable
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    }
-  };
 
   // Fetch data when the component mounts
   useEffect(() => {
@@ -291,12 +295,7 @@ const Home = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
     >
-      <ScrollView
-        style={styles.container}
-        // contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* <View> */}
+      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.textContainer}>
           <Text style={styles.header}>Little Lemon</Text>
           <Text style={styles.subHeader}>Chicago</Text>
@@ -358,12 +357,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#495E57",
     flexDirection: "row",
   },
-  // contentContainer: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center", // Vertically align content
-  //   // paddingHorizontal: 15,
-  // },
+
   textContainer: {
     flex: 1,
     flexDirection: "column",
@@ -390,7 +384,6 @@ const styles = StyleSheet.create({
     height: 140,
   },
   searchBar: {
-    // marginTop: 55,
     marginLeft: 15,
     borderRadius: 8,
     height: 50,

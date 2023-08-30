@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import { useFonts } from "expo-font";
 import { Image, ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Hero from "../components/Hero";
 
 const Onboarding = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -53,14 +54,16 @@ const Onboarding = ({ navigation }) => {
   // }
   return (
     <ScrollView style={styles.container}>
-      <Image
+      {/* <Image
         style={styles.img}
         source={require("../assets/Logo.png")}
         resizeMode="contain"
         accessible={true}
         accessibilityLabel="Little Lemon Logo"
       />
-      <Text style={styles.introText}>Let us get to know you</Text>
+      <Text style={styles.introText}>Let us get to know you</Text> */}
+      <Hero />
+
       <Text style={styles.text}>First Name</Text>
       <TextInput
         style={styles.textInput}
@@ -96,7 +99,6 @@ const Onboarding = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 24,
   },
   img: {
     height: 150,
@@ -117,6 +119,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#495E57",
+    marginLeft: 24,
   },
   textInput: {
     padding: 10,
@@ -128,6 +131,7 @@ const styles = StyleSheet.create({
     borderColor: "#495E57",
     fontSize: 20,
     color: "#495e57",
+    marginLeft: 24,
   },
   warning: {
     color: "red",
@@ -141,7 +145,7 @@ const styles = StyleSheet.create({
     color: "#EEFEEF",
     fontSize: 25,
     textAlign: "center",
-    marginLeft: 150,
+    marginLeft: 170,
     marginVertical: 40,
   },
 });

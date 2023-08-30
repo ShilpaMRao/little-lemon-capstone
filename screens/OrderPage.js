@@ -13,6 +13,10 @@ import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { RadioButton } from "react-native-radio-buttons-group";
 import Button from "../components/Button";
+import RenderInitials from "../utils/RenderInitials";
+import { useLayoutEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Pressable } from "react-native";
 const BASE_IMAGE_URL =
   "https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/";
 const API_URL =
@@ -25,8 +29,47 @@ const cost = [
 ];
 const OrderPage = ({ navigation }) => {
   const [data, setData] = useState("");
-
   const route = useRoute();
+  //--------------Logic to render Avatar on the top right of the header -------//
+  const [initials, setInitials] = useState("");
+  useEffect(() => {
+    const fetchUserInitials = async () => {
+      try {
+        const UserInfo = await AsyncStorage.getItem("userInfo");
+        if (UserInfo) {
+          const parsedUserInfo = JSON.parse(UserInfo);
+          const userInitials = (
+            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
+          ).toUpperCase();
+          setInitials(userInitials);
+        }
+      } catch (error) {
+        console.error("Error fetching user initials:", error);
+      }
+    };
+
+    fetchUserInitials();
+  }, []);
+
+  // Use useLayoutEffect to configure the header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Pressable
+            onPress={() => {
+              // Handle the press event here, e.g., navigate to another screen
+              navigation.navigate("Profile");
+            }}
+          >
+            {/* Add your Pressable content here */}
+            <RenderInitials initials={initials} />
+          </Pressable>
+        </View>
+      ),
+    });
+  }, [navigation, initials]);
+  //----------------------------------------------------------//
   const { menuItem } = route.params; // Get menu item data from route params
   console.log("MenuItems in orderpage.js : ", menuItem);
   // Create a map to store consolidated items
@@ -127,6 +170,7 @@ const OrderPage = ({ navigation }) => {
     Alert.alert(
       "Your Order will be with you shortly. Thank you for your business!"
     );
+    navigation.navigate("PaymentPage");
   };
   return (
     <View style={styles.container}>
