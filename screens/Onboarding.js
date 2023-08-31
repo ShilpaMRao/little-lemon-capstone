@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 import { Image, ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Hero from "../components/Hero";
+import Footer from "../components/Footer";
 import { View } from "react-native";
 
 const Onboarding = ({ navigation }) => {
@@ -87,6 +88,7 @@ const Onboarding = ({ navigation }) => {
           Next
         </Button>
       </View>
+      <Footer />
     </ScrollView>
   );
 };

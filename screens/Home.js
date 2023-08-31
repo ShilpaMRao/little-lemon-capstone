@@ -32,6 +32,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Font from "expo-font";
 import RenderInitials from "../utils/RenderInitials";
 import Hero from "../components/Hero";
+import Footer from "../components/Footer";
 const sections = ["Appetizers", "Salads", "Beverages"];
 const API_URL =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";

@@ -18,6 +18,7 @@ import { validatePhone } from "../utils";
 import RenderInitials from "../utils/RenderInitials";
 import { useLayoutEffect } from "react";
 import { Pressable } from "react-native";
+import Footer from "../components/Footer";
 
 const Profile = ({ navigation }) => {
   const [fName, setFName] = useState("");
@@ -50,7 +51,8 @@ const Profile = ({ navigation }) => {
           setFName(parsedUserInfo.firstName);
           setLName(parsedUserInfo.lastName);
           setEml(parsedUserInfo.email);
-          setAvatar(parsedUserInfo.avatarSource);
+          const avtrSource = parsedUserInfo.avatarSource;
+          setAvatar(avtrSource);
           const userInitials = (
             parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
           ).toUpperCase();
@@ -83,7 +85,7 @@ const Profile = ({ navigation }) => {
         </View>
       ),
     });
-  }, [navigation, initials, avatar]);
+  }, [navigation, initials, image]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -298,14 +300,11 @@ const Profile = ({ navigation }) => {
           Save Changes
         </Button>
       </View>
+      <Footer />
     </ScrollView>
   );
 };
-Profile.navigationOptions = ({ navigation }) => ({
-  headerRight: () => (
-    <InitialsAvatar navigation={navigation} initials="AB" /> // Pass the user's initials here
-  ),
-});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

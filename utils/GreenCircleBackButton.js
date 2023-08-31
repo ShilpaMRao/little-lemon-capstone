@@ -1,22 +1,32 @@
 import React from "react";
-import { View } from "react-native";
-import { HeaderBackButton } from "@react-navigation/stack";
+import { View, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons"; // You might need to install this library
 
-const GreenCircleBackButton = (props) => {
+const GreenCircleBackButton = () => {
+  const navigation = useNavigation();
+
+  const handleBackPress = () => {
+    // Handle the back press here
+    navigation.goBack();
+  };
+
   return (
-    <View
-      style={{
-        backgroundColor: "green",
-        borderRadius: 30, // Make it large enough to encircle the arrow
-        width: 40, // Adjust the size as needed
-        height: 40, // Adjust the size as needed
-        alignItems: "center",
-        justifyContent: "center",
-        marginLeft: 10, // Adjust the margin as needed
-      }}
-    >
-      <HeaderBackButton {...props} tintColor="white" />
-    </View>
+    <TouchableOpacity onPress={handleBackPress}>
+      <View
+        style={{
+          backgroundColor: "#495E57",
+          borderRadius: 30,
+          width: 40,
+          height: 40,
+          alignItems: "center",
+          justifyContent: "center",
+          marginLeft: 10,
+        }}
+      >
+        {/* <AntDesign name="arrowleft" size={24} color="white" /> */}
+      </View>
+    </TouchableOpacity>
   );
 };
 

@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import OrderPage from "./screens/OrderPage";
 import PaymentPage from "./screens/PaymentPage";
+import GreenCircleBackButton from "./utils/GreenCircleBackButton";
 const Stack = createNativeStackNavigator();
 function LogoTitle() {
   return (
@@ -31,6 +32,7 @@ function LogoTitle() {
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
+
   useEffect(() => {
     // Read the onboarding completion flag from AsyncStorage
     const fetchData = async () => {
@@ -51,7 +53,7 @@ export default function App() {
       }
     };
     fetchData(); // Call the async function
-  }, []); // Display Splash Screen until AsyncStorage is read
+  }, [isOnboardingComplete]); // Display Splash Screen until AsyncStorage is read
   if (isLoading) {
     return <SplashScreen />;
   }
@@ -68,6 +70,7 @@ export default function App() {
           component={Home}
           options={{
             title: "Home",
+            // headerLeft: () => <GreenCircleBackButton />,
             headerTitle: (props) => <LogoTitle {...props} />,
           }}
         />
@@ -77,6 +80,7 @@ export default function App() {
           component={MenuItemDetail}
           options={{
             title: "Menu",
+            // headerLeft: () => <GreenCircleBackButton />,
             headerTitle: (props) => <LogoTitle {...props} />,
           }}
         />
@@ -85,6 +89,7 @@ export default function App() {
           component={OrderPage}
           options={{
             title: "Orders",
+            // headerLeft: () => <GreenCircleBackButton />,
             headerTitle: (props) => <LogoTitle {...props} />,
           }}
         />
@@ -93,7 +98,7 @@ export default function App() {
           component={Profile}
           options={{
             title: "Profile",
-            headerLeft: () => null, // This hides the back button for YourScreen
+            // headerLeft: () => <GreenCircleBackButton />,
             headerTitle: (props) => <LogoTitle {...props} />,
           }}
         />

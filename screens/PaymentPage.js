@@ -8,6 +8,7 @@ import { Text } from "react-native";
 import RenderInitials from "../utils/RenderInitials";
 import Hero from "../components/Hero";
 import { ScrollView } from "react-native";
+import Footer from "../components/Footer";
 // import GreenCircleBackButton from "../utils/GreenCircleBackButton";
 
 const PaymentPage = ({ navigation }) => {
@@ -25,9 +26,6 @@ const PaymentPage = ({ navigation }) => {
           ).toUpperCase();
           setInitials(userInitials);
           const avtrSource = parsedUserInfo.avatarSource;
-
-          console.log("avtrSource in paymentpage: ", avtrSource);
-
           setAvatar(avtrSource);
         }
       } catch (error) {
@@ -67,8 +65,8 @@ const PaymentPage = ({ navigation }) => {
           Thank you for your payment. Your order will be delivered to you
           shortly!
         </Text>
-        {/* Other content goes here */}
       </View>
+      <Footer />
     </ScrollView>
   );
 };
@@ -87,6 +85,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#495E57",
     marginTop: 120,
+    marginBottom: 64,
   },
 });
 
