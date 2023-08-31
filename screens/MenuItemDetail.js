@@ -16,6 +16,7 @@ const MenuItemDetail = ({ navigation }) => {
   const { menuItem } = route.params; // Get menu item data from route params
   //--------------Logic to render Avatar on the top right of the header -------//
   const [initials, setInitials] = useState("");
+  const [avatar, setAvatar] = useState(null);
   useEffect(() => {
     const fetchUserInitials = async () => {
       try {
@@ -26,6 +27,8 @@ const MenuItemDetail = ({ navigation }) => {
             parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
           ).toUpperCase();
           setInitials(userInitials);
+          const avtrSource = parsedUserInfo.avatarSource;
+          setAvatar(avtrSource);
         }
       } catch (error) {
         console.error("Error fetching user initials:", error);
@@ -47,12 +50,12 @@ const MenuItemDetail = ({ navigation }) => {
             }}
           >
             {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} />
+            <RenderInitials initials={initials} imageUrl={avatar} />
           </Pressable>
         </View>
       ),
     });
-  }, [navigation, initials]);
+  }, [navigation, initials, avatar]);
   //----------------------------------------------------------//
   const getImageUrl = (imageFileName) => {
     return `${BASE_IMAGE_URL}${imageFileName}?raw=true`;

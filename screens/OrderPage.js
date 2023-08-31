@@ -32,6 +32,7 @@ const OrderPage = ({ navigation }) => {
   const route = useRoute();
   //--------------Logic to render Avatar on the top right of the header -------//
   const [initials, setInitials] = useState("");
+  const [avatar, setAvatar] = useState(null);
   useEffect(() => {
     const fetchUserInitials = async () => {
       try {
@@ -42,6 +43,11 @@ const OrderPage = ({ navigation }) => {
             parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
           ).toUpperCase();
           setInitials(userInitials);
+          const avtrSource = parsedUserInfo.avatarSource;
+
+          console.log("avtrSource in orderpage: ", avtrSource);
+
+          setAvatar(avtrSource);
         }
       } catch (error) {
         console.error("Error fetching user initials:", error);
@@ -63,12 +69,12 @@ const OrderPage = ({ navigation }) => {
             }}
           >
             {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} />
+            <RenderInitials initials={initials} imageUrl={avatar} />
           </Pressable>
         </View>
       ),
     });
-  }, [navigation, initials]);
+  }, [navigation, initials, avatar]);
   //----------------------------------------------------------//
   const { menuItem } = route.params; // Get menu item data from route params
   console.log("MenuItems in orderpage.js : ", menuItem);

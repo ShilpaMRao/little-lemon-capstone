@@ -35,7 +35,7 @@ const Profile = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
   const [initials, setInitials] = useState("");
-
+  const [avatar, setAvatar] = useState(null);
   const isPhonenumberValid = validatePhone(phone);
 
   // getting the user info from the AsyncStorage
@@ -50,9 +50,11 @@ const Profile = ({ navigation }) => {
           setFName(parsedUserInfo.firstName);
           setLName(parsedUserInfo.lastName);
           setEml(parsedUserInfo.email);
+          setAvatar(parsedUserInfo.avatarSource);
           const userInitials = (
             parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
           ).toUpperCase();
+
           setInitials(userInitials);
         }
       } catch (error) {
@@ -75,12 +77,13 @@ const Profile = ({ navigation }) => {
             }}
           >
             {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} />
+
+            <RenderInitials initials={initials} imageUrl={avatar} />
           </Pressable>
         </View>
       ),
     });
-  }, [navigation, initials]);
+  }, [navigation, initials, avatar]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -91,7 +94,7 @@ const Profile = ({ navigation }) => {
       quality: 1,
     });
 
-    console.log(result);
+    console.log("---->", result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
@@ -107,12 +110,6 @@ const Profile = ({ navigation }) => {
         />
       );
     } else {
-      // const initials = `${fName} ${lName}`
-      //   .split(" ")
-      //   .map((namePart) => namePart[0])
-      //   .join("")
-      //   .toUpperCase();
-
       return (
         <View
           style={{
@@ -161,6 +158,7 @@ const Profile = ({ navigation }) => {
     Alert.alert("Changes Discarded");
   };
   const handleSaveChanges = async () => {
+    console.log("Image :", image);
     console.log("FirstName : ", fName);
     console.log("LastName : ", lName);
     console.log("Email: ", eml);
@@ -179,6 +177,7 @@ const Profile = ({ navigation }) => {
           lastName: lName,
           email: eml,
           phone: phone,
+          avatarSource: image,
           orderStatuses: toggleCheckBoxOrderStatuses,
           passwordChanges: toggleCheckBoxPasswordChanges,
           specialOffers: toggleCheckBoxSpecialOffers,

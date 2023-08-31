@@ -110,26 +110,6 @@ const BASE_IMAGE_URL =
 //   setFilterSelections(arrayCopy);
 // };
 
-const renderInitialsAvatar = (userInitials) => {
-  const initials = `${userInitials}`.toUpperCase();
-  console.log("initials :", initials);
-  return (
-    <View
-      style={{
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: "#495E57", // Background color of the avatar
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 10,
-      }}
-    >
-      <Text style={{ fontSize: 20, color: "#FFFFFF" }}>{initials}</Text>
-    </View>
-  );
-};
-
 const Home = ({ navigation }) => {
   const [data, setData] = useState([]);
 
@@ -137,6 +117,7 @@ const Home = ({ navigation }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   //--------------Logic to render Avatar on the top right of the header -------//
   const [initials, setInitials] = useState("");
+  const [avatar, setAvatar] = useState(null);
   useEffect(() => {
     const fetchUserInitials = async () => {
       try {
@@ -147,6 +128,8 @@ const Home = ({ navigation }) => {
             parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
           ).toUpperCase();
           setInitials(userInitials);
+          const avtrSource = parsedUserInfo.avatarSource;
+          setAvatar(avtrSource);
         }
       } catch (error) {
         console.error("Error fetching user initials:", error);
@@ -168,12 +151,12 @@ const Home = ({ navigation }) => {
             }}
           >
             {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} />
+            <RenderInitials initials={initials} imageUrl={avatar} />
           </Pressable>
         </View>
       ),
     });
-  }, [navigation, initials]);
+  }, [navigation, initials, avatar]);
   //----------------------------------------------------------//
   const handleCategorySelect = (category) => {
     if (selectedCategories.includes(category)) {

@@ -13,6 +13,7 @@ import { ScrollView } from "react-native";
 const PaymentPage = ({ navigation }) => {
   //--------------Logic to render Avatar on the top right of the header -------//
   const [initials, setInitials] = useState("");
+  const [avatar, setAvatar] = useState(null);
   useEffect(() => {
     const fetchUserInitials = async () => {
       try {
@@ -23,6 +24,11 @@ const PaymentPage = ({ navigation }) => {
             parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
           ).toUpperCase();
           setInitials(userInitials);
+          const avtrSource = parsedUserInfo.avatarSource;
+
+          console.log("avtrSource in paymentpage: ", avtrSource);
+
+          setAvatar(avtrSource);
         }
       } catch (error) {
         console.error("Error fetching user initials:", error);
@@ -46,12 +52,12 @@ const PaymentPage = ({ navigation }) => {
             }}
           >
             {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} />
+            <RenderInitials initials={initials} imageUrl={avatar} />
           </Pressable>
         </View>
       ),
     });
-  }, [navigation, initials]);
+  }, [navigation, initials, avatar]);
   //----------------------------------------------------------//
   return (
     <ScrollView style={styles.container}>

@@ -1,7 +1,26 @@
 import React from "react";
+import { Image } from "react-native";
 import { Text } from "react-native";
 import { View } from "react-native";
-function RenderInitials({ initials }) {
+function RenderInitials({ initials, imageUrl }) {
+  // Check if an image URL is provided
+
+  if (imageUrl) {
+    return (
+      <Image
+        source={{ uri: imageUrl }}
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          marginRight: 10,
+        }}
+        onError={(error) => {
+          console.error("Image loading error:", error);
+        }}
+      />
+    );
+  }
   const inUpperCaseInitials = initials.toUpperCase();
   return (
     <View
@@ -21,4 +40,5 @@ function RenderInitials({ initials }) {
     </View>
   );
 }
+
 export default RenderInitials;

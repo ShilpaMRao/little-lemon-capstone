@@ -12,7 +12,7 @@ const Hero = () => {
         <Text style={styles.header}>Little Lemon</Text>
         <Text style={styles.subHeader}>Chicago</Text>
         <Text style={styles.body}>
-          We are a family owned Mediterranean restaurant,focused on traditional
+          We are a family owned Mediterranean restaurant, focused on traditional
           receipes served with a modern twist.
         </Text>
       </View>

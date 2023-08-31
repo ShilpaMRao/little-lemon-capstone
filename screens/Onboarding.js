@@ -24,9 +24,9 @@ const Onboarding = ({ navigation }) => {
       await AsyncStorage.setItem(
         "userInfo",
         JSON.stringify({
-          firstName,
-          lastName,
-          email,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
           phone: null,
           avatarSource: null,
           orderStatuses: false,
