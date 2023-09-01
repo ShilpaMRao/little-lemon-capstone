@@ -39,6 +39,15 @@ const Profile = ({ navigation }) => {
   const [avatar, setAvatar] = useState(null);
   const isPhonenumberValid = validatePhone(phone);
 
+  // disabling the backbutton on the header of the page
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+        return;
+      }),
+    [navigation]
+  );
   // getting the user info from the AsyncStorage
   useEffect(() => {
     const fetchData = async () => {

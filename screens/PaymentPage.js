@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
+
 import { useLayoutEffect } from "react";
 import { useEffect } from "react";
 import { Pressable, StyleSheet } from "react-native";
@@ -57,6 +58,16 @@ const PaymentPage = ({ navigation }) => {
     });
   }, [navigation, initials, avatar]);
   //----------------------------------------------------------//
+  // disabling the backbutton on the header of the page
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+        return;
+      }),
+    [navigation]
+  );
+
   return (
     <ScrollView style={styles.container}>
       <Hero />
