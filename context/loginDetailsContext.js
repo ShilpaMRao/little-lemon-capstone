@@ -40,11 +40,6 @@ const LoginDetailsProvider = ({ children }) => {
     fetchUserInitials();
   }, []);
 
-  // useEffect(() => {
-  //   const { initials, avatar } = state;
-  //   console.log("In context provider", initials, avatar);
-  // }, [state]);
-
   return (
     <LoginDetailsContext.Provider value={[state, setState]}>
       {children}
