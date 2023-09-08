@@ -33,6 +33,9 @@ import * as Font from "expo-font";
 import RenderInitials from "../utils/RenderInitials";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
+import { useContext } from "react";
+import { LoginDetailsContext } from "../context/loginDetailsContext";
+import useHeaderWithInitials from "../components/customHooks/useHeaderWithInitials";
 const sections = ["Appetizers", "Salads", "Beverages"];
 const API_URL =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -112,52 +115,63 @@ const BASE_IMAGE_URL =
 // };
 
 const Home = ({ navigation }) => {
+  //global state
+  const [state] = useContext(LoginDetailsContext);
+  // Destructure the properties directly
+  const { initials, avatar } = state;
+
+  console.log("in Home ==> Initials:", initials);
+  console.log("in Home ==> Avatar:", avatar);
   const [data, setData] = useState([]);
 
   const [searchBarText, setSearchBarText] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   //--------------Logic to render Avatar on the top right of the header -------//
-  const [initials, setInitials] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  useEffect(() => {
-    const fetchUserInitials = async () => {
-      try {
-        const UserInfo = await AsyncStorage.getItem("userInfo");
-        if (UserInfo) {
-          const parsedUserInfo = JSON.parse(UserInfo);
-          const userInitials = (
-            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
-          ).toUpperCase();
-          setInitials(userInitials);
-          const avtrSource = parsedUserInfo.avatarSource;
-          setAvatar(avtrSource);
-        }
-      } catch (error) {
-        console.error("Error fetching user initials:", error);
-      }
-    };
+  // const [initials, setInitials] = useState("");
+  //  const [avatar, setAvatar] = useState(null);
+  // useEffect(() => {
+  //   const fetchUserInitials = async () => {
+  //     try {
+  //       const UserInfo = await AsyncStorage.getItem("userInfo");
+  //       if (UserInfo) {
+  //         const parsedUserInfo = JSON.parse(UserInfo);
+  //         const userInitials = (
+  //           parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
+  //         ).toUpperCase();
+  //         setInitials(userInitials);
+  //         const avtrSource = parsedUserInfo.avatarSource;
+  //         setAvatar(avtrSource);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user initials:", error);
+  //     }
+  //   };
 
-    fetchUserInitials();
-  }, []);
+  //   fetchUserInitials();
+  // }, []);
 
   // Use useLayoutEffect to configure the header
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Pressable
-            onPress={() => {
-              // Handle the press event here, e.g., navigate to another screen
-              navigation.navigate("Profile");
-            }}
-          >
-            {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} imageUrl={avatar} />
-          </Pressable>
-        </View>
-      ),
-    });
-  }, [navigation, initials, avatar]);
+  // Use the custom hook to configure the header
+  useHeaderWithInitials(navigation, initials, avatar);
+  // useLayoutEffect(() => {
+  //   // const initials = JSON.stringify(state.initials);
+  //   // const avatar = JSON.stringify(state.avatar);
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <View style={{ flexDirection: "row", alignItems: "center" }}>
+  //         <Pressable
+  //           onPress={() => {
+  //             // Handle the press event here, e.g., navigate to another screen
+  //             navigation.navigate("Profile");
+  //           }}
+  //         >
+  //           {/* Add your Pressable content here */}
+  //           <RenderInitials initials={initials} imageUrl={avatar} />
+  //         </Pressable>
+  //       </View>
+  //     ),
+  //   });
+  // }, [navigation, initials, avatar]);
   //----------------------------------------------------------//
   const handleCategorySelect = (category) => {
     if (selectedCategories.includes(category)) {

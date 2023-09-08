@@ -14,7 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import OrderPage from "./screens/OrderPage";
 import PaymentPage from "./screens/PaymentPage";
 import GreenCircleBackButton from "./utils/GreenCircleBackButton";
-const Stack = createNativeStackNavigator();
+import { LoginDetailsProvider } from "./context/loginDetailsContext";
+
 function LogoTitle() {
   return (
     <Image
@@ -30,6 +31,7 @@ function LogoTitle() {
 }
 
 export default function App() {
+  const Stack = createNativeStackNavigator();
   const [isLoading, setIsLoading] = useState(false);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
 
@@ -53,69 +55,71 @@ export default function App() {
       }
     };
     fetchData(); // Call the async function
-  }, [isOnboardingComplete]); // Display Splash Screen until AsyncStorage is read
+  }); // Display Splash Screen until AsyncStorage is read
   if (isLoading) {
     return <SplashScreen />;
   }
   console.log("isOnboardingComplete in App.js:", isOnboardingComplete);
   return (
     <NavigationContainer style={styles.container}>
-      <Stack.Navigator
-        initialRouteName={isOnboardingComplete ? "Home" : "Onboarding"}
-      >
-        {/* {isOnboardingComplete ? ( */}
-        {/* <> */}
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            title: "Home",
-            // headerLeft: () => <GreenCircleBackButton />,
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
+      <LoginDetailsProvider>
+        <Stack.Navigator
+          initialRouteName={isOnboardingComplete ? "Home" : "Onboarding"}
+        >
+          {/* {isOnboardingComplete ? ( */}
+          {/* <> */}
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              title: "Home",
+              // headerLeft: () => <GreenCircleBackButton />,
+              headerTitle: (props) => <LogoTitle {...props} />,
+            }}
+          />
 
-        <Stack.Screen
-          name="MenuItemDetail"
-          component={MenuItemDetail}
-          options={{
-            title: "Menu",
-            // headerLeft: () => <GreenCircleBackButton />,
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        <Stack.Screen
-          name="OrderPage"
-          component={OrderPage}
-          options={{
-            title: "Orders",
-            // headerLeft: () => <GreenCircleBackButton />,
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            title: "Profile",
-            // headerLeft: () => <GreenCircleBackButton />,
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        <Stack.Screen
-          name="PaymentPage"
-          component={PaymentPage}
-          options={{
-            title: "PaymentPage",
+          <Stack.Screen
+            name="MenuItemDetail"
+            component={MenuItemDetail}
+            options={{
+              title: "Menu",
+              // headerLeft: () => <GreenCircleBackButton />,
+              headerTitle: (props) => <LogoTitle {...props} />,
+            }}
+          />
+          <Stack.Screen
+            name="OrderPage"
+            component={OrderPage}
+            options={{
+              title: "Orders",
+              // headerLeft: () => <GreenCircleBackButton />,
+              headerTitle: (props) => <LogoTitle {...props} />,
+            }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
+            options={{
+              title: "Profile",
+              // headerLeft: () => <GreenCircleBackButton />,
+              headerTitle: (props) => <LogoTitle {...props} />,
+            }}
+          />
+          <Stack.Screen
+            name="PaymentPage"
+            component={PaymentPage}
+            options={{
+              title: "PaymentPage",
 
-            headerTitle: (props) => <LogoTitle {...props} />,
-          }}
-        />
-        {/* </> */}
-        {/* ) : ( */}
-        <Stack.Screen name="Onboarding" component={Onboarding} />
-        {/* )} */}
-      </Stack.Navigator>
+              headerTitle: (props) => <LogoTitle {...props} />,
+            }}
+          />
+          {/* </> */}
+          {/* ) : ( */}
+          <Stack.Screen name="Onboarding" component={Onboarding} />
+          {/* )} */}
+        </Stack.Navigator>
+      </LoginDetailsProvider>
     </NavigationContainer>
   );
 }

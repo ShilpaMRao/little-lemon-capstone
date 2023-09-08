@@ -10,64 +10,84 @@ import RenderInitials from "../utils/RenderInitials";
 import Hero from "../components/Hero";
 import { ScrollView } from "react-native";
 import Footer from "../components/Footer";
+import { BackHandler } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useContext } from "react";
+import { LoginDetailsContext } from "../context/loginDetailsContext";
+import useHeaderWithInitials from "../components/customHooks/useHeaderWithInitials";
+
 // import GreenCircleBackButton from "../utils/GreenCircleBackButton";
 
 const PaymentPage = ({ navigation }) => {
+  const [state] = useContext(LoginDetailsContext);
+  // Now you can access state.initials and state.avatar
+  const { initials, avatar } = state;
   //--------------Logic to render Avatar on the top right of the header -------//
-  const [initials, setInitials] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  useEffect(() => {
-    const fetchUserInitials = async () => {
-      try {
-        const UserInfo = await AsyncStorage.getItem("userInfo");
-        if (UserInfo) {
-          const parsedUserInfo = JSON.parse(UserInfo);
-          const userInitials = (
-            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
-          ).toUpperCase();
-          setInitials(userInitials);
-          const avtrSource = parsedUserInfo.avatarSource;
-          setAvatar(avtrSource);
-        }
-      } catch (error) {
-        console.error("Error fetching user initials:", error);
-      }
-    };
+  // const [initials, setInitials] = useState("");
+  // const [avatar, setAvatar] = useState(null);
+  // useEffect(() => {
+  //   const fetchUserInitials = async () => {
+  //     try {
+  //       const UserInfo = await AsyncStorage.getItem("userInfo");
+  //       if (UserInfo) {
+  //         const parsedUserInfo = JSON.parse(UserInfo);
+  //         const userInitials = (
+  //           parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
+  //         ).toUpperCase();
+  //         setInitials(userInitials);
+  //         const avtrSource = parsedUserInfo.avatarSource;
+  //         setAvatar(avtrSource);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user initials:", error);
+  //     }
+  //   };
 
-    fetchUserInitials();
-  }, []);
+  //   fetchUserInitials();
+  // }, []);
 
   // Use useLayoutEffect to configure the header
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      // headerLeft: (props) => <GreenCircleBackButton {...props} />,
+  useHeaderWithInitials(navigation, initials, avatar);
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     // headerLeft: (props) => <GreenCircleBackButton {...props} />,
 
-      headerRight: () => (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Pressable
-            onPress={() => {
-              // Handle the press event here, e.g., navigate to another screen
-              navigation.navigate("Profile");
-            }}
-          >
-            {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} imageUrl={avatar} />
-          </Pressable>
-        </View>
-      ),
-    });
-  }, [navigation, initials, avatar]);
-  //----------------------------------------------------------//
+  //     headerRight: () => (
+  //       <View style={{ flexDirection: "row", alignItems: "center" }}>
+  //         <Pressable
+  //           onPress={() => {
+  //             // Handle the press event here, e.g., navigate to another screen
+  //             navigation.navigate("Profile");
+  //           }}
+  //         >
+  //           {/* Add your Pressable content here */}
+  //           <RenderInitials initials={initials} imageUrl={avatar} />
+  //         </Pressable>
+  //       </View>
+  //     ),
+  //   });
+  // }, [navigation, initials, avatar]);
+  // //----------------------------------------------------------//
   // disabling the backbutton on the header of the page
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (e) => {
-        e.preventDefault();
-        return;
-      }),
-    [navigation]
-  );
+  // useEffect(
+  //   () =>
+  //     navigation.addListener("beforeRemove", (e) => {
+  //       e.preventDefault();
+  //       return;
+  //     }),
+  //   [navigation]
+  // );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        return true;
+      };
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [navigation])
+  );
   return (
     <ScrollView style={styles.container}>
       <Hero />

@@ -7,8 +7,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 import { View } from "react-native";
+import { useContext } from "react";
+import { LoginDetailsContext } from "../context/loginDetailsContext";
 
 const Onboarding = ({ navigation }) => {
+  //global
+  // const [state, setState] = useContext(LoginDetailsContext);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,6 +43,9 @@ const Onboarding = ({ navigation }) => {
         })
       );
       console.log("User details stored successfully in AsyncStorage");
+      // const data = await AsyncStorage.getItem("userInfo");
+      // const userData = JSON.parse(data);
+      // setState(userData);
       navigation.navigate("Profile");
       console.log("Navigated to 'Profile'");
       setFirstName("");
@@ -47,13 +55,7 @@ const Onboarding = ({ navigation }) => {
       console.error("Error setting onboarding status in Onboarding.js:", error);
     }
   };
-  // const [loaded] = useFonts({
-  //   Markazi: require("C:/Users/Admin/Shilpa/Coursera/little-lemon-capstone/assets/fonts/MarkaziText-Regular.ttf"),
-  // });
 
-  // if (!loaded) {
-  //   return null;
-  // }
   return (
     <ScrollView style={styles.container}>
       <Hero />

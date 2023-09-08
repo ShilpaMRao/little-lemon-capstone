@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Button";
-
+import { BackHandler } from "react-native";
 import CheckBox from "expo-checkbox";
 import * as ImagePicker from "expo-image-picker";
 import { validatePhone } from "../utils";
@@ -19,8 +19,12 @@ import RenderInitials from "../utils/RenderInitials";
 import { useLayoutEffect } from "react";
 import { Pressable } from "react-native";
 import Footer from "../components/Footer";
+import { useContext } from "react";
+import { LoginDetailsContext } from "../context/loginDetailsContext";
 
 const Profile = ({ navigation }) => {
+  //global state
+  const [state, setState] = useContext(LoginDetailsContext);
   const [fName, setFName] = useState("");
   const [lName, setLName] = useState("");
   const [eml, setEml] = useState("");
@@ -39,21 +43,13 @@ const Profile = ({ navigation }) => {
   const [avatar, setAvatar] = useState(null);
   const isPhonenumberValid = validatePhone(phone);
 
-  // disabling the backbutton on the header of the page
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (e) => {
-        e.preventDefault();
-        return;
-      }),
-    [navigation]
-  );
   // getting the user info from the AsyncStorage
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch user info from AsyncStorage
         const userInfo = await AsyncStorage.getItem("userInfo");
+
         console.log("UserInfo in Profile.js: ", userInfo);
         if (userInfo) {
           const parsedUserInfo = JSON.parse(userInfo);
@@ -89,7 +85,7 @@ const Profile = ({ navigation }) => {
           >
             {/* Add your Pressable content here */}
 
-            <RenderInitials initials={initials} imageUrl={avatar} />
+            <RenderInitials initials={initials} imageUrl={image} />
           </Pressable>
         </View>
       ),
@@ -196,9 +192,8 @@ const Profile = ({ navigation }) => {
           isOnboardingComplete: true,
         })
       );
-      // Retrieve and log the saved userInfo
-      const savedUserInfo = await AsyncStorage.getItem("userInfo");
-      console.log("Saved UserInfo:", savedUserInfo);
+      // save the initials and avatar into global state
+      setState({ ...state, initials: initials, avatar: image });
     } catch (error) {
       console.error("Error saving user info:", error);
     }

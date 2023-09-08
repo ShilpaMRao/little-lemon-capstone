@@ -17,6 +17,9 @@ import RenderInitials from "../utils/RenderInitials";
 import { useLayoutEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Pressable } from "react-native";
+import { useContext } from "react";
+import { LoginDetailsContext } from "../context/loginDetailsContext";
+import useHeaderWithInitials from "../components/customHooks/useHeaderWithInitials";
 const BASE_IMAGE_URL =
   "https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/";
 const API_URL =
@@ -28,54 +31,59 @@ const cost = [
   { name: "Total", price: 0 },
 ];
 const OrderPage = ({ navigation }) => {
+  const [state] = useContext(LoginDetailsContext);
+  // Now you can access state.initials and state.avatar
+  const { initials, avatar } = state;
   const [data, setData] = useState("");
   const route = useRoute();
   //--------------Logic to render Avatar on the top right of the header -------//
-  const [initials, setInitials] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  useEffect(() => {
-    const fetchUserInitials = async () => {
-      try {
-        const UserInfo = await AsyncStorage.getItem("userInfo");
-        if (UserInfo) {
-          const parsedUserInfo = JSON.parse(UserInfo);
-          const userInitials = (
-            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
-          ).toUpperCase();
-          setInitials(userInitials);
-          const avtrSource = parsedUserInfo.avatarSource;
+  // const [initials, setInitials] = useState("");
+  // const [avatar, setAvatar] = useState(null);
+  // useEffect(() => {
+  //   const fetchUserInitials = async () => {
+  //     try {
+  //       const UserInfo = await AsyncStorage.getItem("userInfo");
+  //       if (UserInfo) {
+  //         const parsedUserInfo = JSON.parse(UserInfo);
+  //         const userInitials = (
+  //           parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
+  //         ).toUpperCase();
+  //         setInitials(userInitials);
+  //         const avtrSource = parsedUserInfo.avatarSource;
 
-          console.log("avtrSource in orderpage: ", avtrSource);
+  //         console.log("avtrSource in orderpage: ", avtrSource);
 
-          setAvatar(avtrSource);
-        }
-      } catch (error) {
-        console.error("Error fetching user initials:", error);
-      }
-    };
+  //         setAvatar(avtrSource);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user initials:", error);
+  //     }
+  //   };
 
-    fetchUserInitials();
-  }, []);
+  //   fetchUserInitials();
+  // }, []);
 
-  // Use useLayoutEffect to configure the header
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Pressable
-            onPress={() => {
-              // Handle the press event here, e.g., navigate to another screen
-              navigation.navigate("Profile");
-            }}
-          >
-            {/* Add your Pressable content here */}
-            <RenderInitials initials={initials} imageUrl={avatar} />
-          </Pressable>
-        </View>
-      ),
-    });
-  }, [navigation, initials, avatar]);
-  //----------------------------------------------------------//
+  // Use customHook to configure the header
+  useHeaderWithInitials(navigation, initials, avatar);
+
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <View style={{ flexDirection: "row", alignItems: "center" }}>
+  //         <Pressable
+  //           onPress={() => {
+  //             // Handle the press event here, e.g., navigate to another screen
+  //             navigation.navigate("Profile");
+  //           }}
+  //         >
+  //           {/* Add your Pressable content here */}
+  //           <RenderInitials initials={initials} imageUrl={avatar} />
+  //         </Pressable>
+  //       </View>
+  //     ),
+  //   });
+  // }, [navigation, initials, avatar]);
+  // //----------------------------------------------------------//
   const { menuItem } = route.params; // Get menu item data from route params
   console.log("MenuItems in orderpage.js : ", menuItem);
   // Create a map to store consolidated items
