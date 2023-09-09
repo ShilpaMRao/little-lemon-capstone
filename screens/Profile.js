@@ -21,9 +21,10 @@ import { Pressable } from "react-native";
 import Footer from "../components/Footer";
 import { useContext } from "react";
 import { LoginDetailsContext } from "../context/loginDetailsContext";
+import useHeaderWithInitials from "../components/customHooks/useHeaderWithInitials";
 
 const Profile = ({ navigation }) => {
-  //global state
+  //global state to set the initials and the avatar
   const [state, setState] = useContext(LoginDetailsContext);
   const [fName, setFName] = useState("");
   const [lName, setLName] = useState("");
@@ -56,6 +57,12 @@ const Profile = ({ navigation }) => {
           setFName(parsedUserInfo.firstName);
           setLName(parsedUserInfo.lastName);
           setEml(parsedUserInfo.email);
+          setPhone(parsedUserInfo.phone);
+          setToggleCheckBoxNewsletters(parsedUserInfo.newsletter);
+          setToggleCheckBoxOrderStatuses(parsedUserInfo.orderStatuses);
+          setToggleCheckBoxPasswordChanges(parsedUserInfo.passwordChanges);
+          setToggleCheckBoxSpecialOffers(parsedUserInfo.specialOffers);
+
           const avtrSource = parsedUserInfo.avatarSource;
           setAvatar(avtrSource);
           const userInitials = (
@@ -71,26 +78,30 @@ const Profile = ({ navigation }) => {
 
     fetchData();
   }, []);
-  // Use useLayoutEffect to configure the header
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: null,
-      headerRight: () => (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Pressable
-            onPress={() => {
-              // Handle the press event here, e.g., navigate to another screen
-              navigation.navigate("Profile");
-            }}
-          >
-            {/* Add your Pressable content here */}
 
-            <RenderInitials initials={initials} imageUrl={image} />
-          </Pressable>
-        </View>
-      ),
-    });
-  }, [navigation, initials, image]);
+  // Use customHook to configure the header
+  useHeaderWithInitials(navigation, initials, image);
+
+  // Use useLayoutEffect to configure the header
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerLeft: null,
+  //     headerRight: () => (
+  //       <View style={{ flexDirection: "row", alignItems: "center" }}>
+  //         <Pressable
+  //           onPress={() => {
+  //             // Handle the press event here, e.g., navigate to another screen
+  //             navigation.navigate("Profile");
+  //           }}
+  //         >
+  //           {/* Add your Pressable content here */}
+
+  //           <RenderInitials initials={initials} imageUrl={image} />
+  //         </Pressable>
+  //       </View>
+  //     ),
+  //   });
+  // }, [navigation, initials, image]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -141,9 +152,7 @@ const Profile = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       // Clear all stored data in AsyncStorage
-      await AsyncStorage.clear();
-      const savedUserInfo = await AsyncStorage.getItem("userInfo");
-      console.log("Saved UserInfo after logging out:", savedUserInfo);
+      await AsyncStorage.removeItem("userInfo");
       setIsLoggedOut(true);
       setToggleCheckBoxPasswordChanges(false);
       setToggleCheckBoxOrderStatuses(false);
@@ -174,7 +183,6 @@ const Profile = ({ navigation }) => {
     console.log("Special offers : ", toggleCheckBoxSpecialOffers);
     console.log("Order status : ", toggleCheckBoxOrderStatuses);
     console.log("Newsletters : ", toggleCheckBoxNewsletters);
-
     try {
       // Convert boolean to string before saving
       await AsyncStorage.setItem(
@@ -204,16 +212,7 @@ const Profile = ({ navigation }) => {
       <Text style={styles.text}>Personal Information</Text>
       <View style={styles.imgcontainer}>
         {renderAvatar()}
-        {/* {image ? (
-          <Image source={{ uri: image }} style={styles.img} />
-         ) : (
-         <Image source={defaultAvatar} style={styles.img} />
-        )
-      } */}
-        {/* <Image
-          source={image}
-          // style={{ width: 100, height: 100, borderRadius: 50 }}
-        /> */}
+
         <Button style={styles.changeButton} onPress={pickImage}>
           Change
         </Button>

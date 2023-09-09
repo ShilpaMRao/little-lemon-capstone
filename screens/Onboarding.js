@@ -11,8 +11,8 @@ import { useContext } from "react";
 import { LoginDetailsContext } from "../context/loginDetailsContext";
 
 const Onboarding = ({ navigation }) => {
-  //global
-  // const [state, setState] = useContext(LoginDetailsContext);
+  //global state to check if the user is already on board
+  const [state, setState] = useContext(LoginDetailsContext);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -43,17 +43,16 @@ const Onboarding = ({ navigation }) => {
         })
       );
       console.log("User details stored successfully in AsyncStorage");
-      // const data = await AsyncStorage.getItem("userInfo");
-      // const userData = JSON.parse(data);
-      // setState(userData);
-      navigation.navigate("Profile");
-      console.log("Navigated to 'Profile'");
+
       setFirstName("");
       setLastName("");
       setEmail("");
+      setState({ ...state, token: true });
     } catch (error) {
       console.error("Error setting onboarding status in Onboarding.js:", error);
     }
+    navigation.navigate("Profile");
+    console.log("Navigated to Profile");
   };
 
   return (

@@ -12,6 +12,7 @@ const LoginDetailsProvider = ({ children }) => {
   const [state, setState] = useState({
     initials: "",
     avatar: null,
+    token: false,
   });
   //accessing local data
   useEffect(() => {
@@ -24,12 +25,15 @@ const LoginDetailsProvider = ({ children }) => {
             parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
           ).toUpperCase();
           const avtrSource = parsedUserInfo.avatarSource;
-          console.log("UserInitials in context:", userInitials);
-          console.log("avtrSource in contxt: ", avtrSource);
+          const token = parsedUserInfo.isOnboardingComplete;
+          // console.log("UserInitials in context:", userInitials);
+          // console.log("avtrSource in contxt: ", avtrSource);
+          console.log("Token : ", token);
           setState({
             ...state,
             initials: userInitials,
             avatar: avtrSource,
+            token: token,
           });
         }
       } catch (error) {
