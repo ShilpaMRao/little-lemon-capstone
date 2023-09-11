@@ -42,12 +42,19 @@ const Onboarding = ({ navigation }) => {
           isOnboardingComplete: true,
         })
       );
+      const data = await AsyncStorage.getItem("userInfo");
+      const loginData = JSON.parse(data);
+      const initials = (firstName[0] + lastName[0]).toUpperCase();
+      setState({ ...state, user: loginData, initials: initials, token: true });
+      console.log(
+        "State in onboarding.js after storing data in handle next:",
+        state
+      );
       console.log("User details stored successfully in AsyncStorage");
 
       setFirstName("");
       setLastName("");
       setEmail("");
-      setState({ ...state, token: true });
     } catch (error) {
       console.error("Error setting onboarding status in Onboarding.js:", error);
     }

@@ -11,13 +11,9 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Button";
-import { BackHandler } from "react-native";
 import CheckBox from "expo-checkbox";
 import * as ImagePicker from "expo-image-picker";
 import { validatePhone } from "../utils";
-import RenderInitials from "../utils/RenderInitials";
-import { useLayoutEffect } from "react";
-import { Pressable } from "react-native";
 import Footer from "../components/Footer";
 import { useContext } from "react";
 import { LoginDetailsContext } from "../context/loginDetailsContext";
@@ -40,71 +36,37 @@ const Profile = ({ navigation }) => {
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState(null);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
-  const [initials, setInitials] = useState("");
+  //const [initials, setInitials] = useState("");
   const [avatar, setAvatar] = useState(null);
   const isPhonenumberValid = validatePhone(phone);
 
-  // getting the user info from the AsyncStorage
+  console.log("UserInfo from context into Profile :", state);
+  const parsedUserInfo = state.user;
+  console.log("ParsedUserInfo from context :", parsedUserInfo);
+  const initials = state.initials;
+  console.log("initials from context:", initials);
+  console.log("avatar from context:", state.avatar);
+
+  //getting the user info from the AsyncStorage
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch user info from AsyncStorage
-        const userInfo = await AsyncStorage.getItem("userInfo");
-
-        console.log("UserInfo in Profile.js: ", userInfo);
-        if (userInfo) {
-          const parsedUserInfo = JSON.parse(userInfo);
-          setFName(parsedUserInfo.firstName);
-          setLName(parsedUserInfo.lastName);
-          setEml(parsedUserInfo.email);
-          setPhone(parsedUserInfo.phone);
-          setToggleCheckBoxNewsletters(parsedUserInfo.newsletter);
-          setToggleCheckBoxOrderStatuses(parsedUserInfo.orderStatuses);
-          setToggleCheckBoxPasswordChanges(parsedUserInfo.passwordChanges);
-          setToggleCheckBoxSpecialOffers(parsedUserInfo.specialOffers);
-
-          const avtrSource = parsedUserInfo.avatarSource;
-          setAvatar(avtrSource);
-          const userInitials = (
-            parsedUserInfo.firstName[0] + parsedUserInfo.lastName[0]
-          ).toUpperCase();
-
-          setInitials(userInitials);
-        }
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    };
-
-    fetchData();
+    setFName(parsedUserInfo.firstName);
+    setLName(parsedUserInfo.lastName);
+    setEml(parsedUserInfo.email);
+    if (parsedUserInfo.phone) setPhone(parsedUserInfo.phone);
+    setToggleCheckBoxNewsletters(parsedUserInfo.newsletter);
+    setToggleCheckBoxOrderStatuses(parsedUserInfo.orderStatuses);
+    setToggleCheckBoxPasswordChanges(parsedUserInfo.passwordChanges);
+    setToggleCheckBoxSpecialOffers(parsedUserInfo.specialOffers);
+    const avtrSource = state.avatar;
+    setAvatar(avtrSource);
   }, []);
 
   // Use customHook to configure the header
-  useHeaderWithInitials(navigation, initials, image);
-
-  // Use useLayoutEffect to configure the header
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerLeft: null,
-  //     headerRight: () => (
-  //       <View style={{ flexDirection: "row", alignItems: "center" }}>
-  //         <Pressable
-  //           onPress={() => {
-  //             // Handle the press event here, e.g., navigate to another screen
-  //             navigation.navigate("Profile");
-  //           }}
-  //         >
-  //           {/* Add your Pressable content here */}
-
-  //           <RenderInitials initials={initials} imageUrl={image} />
-  //         </Pressable>
-  //       </View>
-  //     ),
-  //   });
-  // }, [navigation, initials, image]);
+  useHeaderWithInitials(navigation, initials, avatar);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -116,14 +78,17 @@ const Profile = ({ navigation }) => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      console.log("Image after image picking : ", result.assets[0].uri);
+
+      setState({ ...state, avatar: image });
     }
   };
 
   const renderAvatar = () => {
-    if (image) {
+    if (avatar) {
       return (
         <Image
-          source={{ uri: image }}
+          source={{ uri: avatar }}
           style={{ width: 100, height: 100, borderRadius: 50 }}
         />
       );
@@ -150,6 +115,12 @@ const Profile = ({ navigation }) => {
   };
 
   const handleLogout = async () => {
+    setState({
+      initials: "",
+      user: "null",
+      avatar: "",
+      token: false,
+    });
     try {
       // Clear all stored data in AsyncStorage
       await AsyncStorage.removeItem("userInfo");
@@ -164,25 +135,18 @@ const Profile = ({ navigation }) => {
       setLName("");
       setEml("");
       setImage(null);
-      // Navigate to OnboardingScreen
-      navigation.navigate("Onboarding");
     } catch (error) {
       console.error("Error logging out:", error);
     }
+    // Navigate to OnboardingScreen and clear the global state
+
+    console.log("After Log out , state: ", state);
+    navigation.navigate("Onboarding");
   };
   const handleDiscardChanges = () => {
     Alert.alert("Changes Discarded");
   };
   const handleSaveChanges = async () => {
-    console.log("Image :", image);
-    console.log("FirstName : ", fName);
-    console.log("LastName : ", lName);
-    console.log("Email: ", eml);
-    console.log("Phone : ", phone);
-    console.log("PasswordChanges : ", toggleCheckBoxPasswordChanges);
-    console.log("Special offers : ", toggleCheckBoxSpecialOffers);
-    console.log("Order status : ", toggleCheckBoxOrderStatuses);
-    console.log("Newsletters : ", toggleCheckBoxNewsletters);
     try {
       // Convert boolean to string before saving
       await AsyncStorage.setItem(
@@ -201,7 +165,14 @@ const Profile = ({ navigation }) => {
         })
       );
       // save the initials and avatar into global state
-      setState({ ...state, initials: initials, avatar: image });
+      const data = await AsyncStorage.getItem("userInfo");
+      const loginData = JSON.parse(data);
+      setState({
+        ...state,
+        user: loginData,
+        initials: initials,
+        avatar: avatar,
+      });
     } catch (error) {
       console.error("Error saving user info:", error);
     }
@@ -212,7 +183,6 @@ const Profile = ({ navigation }) => {
       <Text style={styles.text}>Personal Information</Text>
       <View style={styles.imgcontainer}>
         {renderAvatar()}
-
         <Button style={styles.changeButton} onPress={pickImage}>
           Change
         </Button>

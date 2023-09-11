@@ -10,6 +10,7 @@ const LoginDetailsContext = createContext();
 
 const LoginDetailsProvider = ({ children }) => {
   const [state, setState] = useState({
+    user: "",
     initials: "",
     avatar: null,
     token: false,
@@ -26,21 +27,21 @@ const LoginDetailsProvider = ({ children }) => {
           ).toUpperCase();
           const avtrSource = parsedUserInfo.avatarSource;
           const token = parsedUserInfo.isOnboardingComplete;
-          // console.log("UserInitials in context:", userInitials);
-          // console.log("avtrSource in contxt: ", avtrSource);
+          console.log("UserInfo in context :", parsedUserInfo);
           console.log("Token : ", token);
           setState({
             ...state,
+            user: parsedUserInfo,
             initials: userInitials,
             avatar: avtrSource,
             token: token,
           });
+          console.log("State in Context :", state);
         }
       } catch (error) {
         console.error("Error fetching user data in Context Provider:", error);
       }
     };
-
     fetchUserInitials();
   }, []);
 
